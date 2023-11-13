@@ -12,6 +12,8 @@ public:
     int getFishCount() const;
     bool isAccessible() const;
     void setFishCount(int count);
+    int getXCoordinate();
+    int getYCoordinate();
     void changeAccessibleState();
 private:
     int fishCount;

@@ -13,6 +13,12 @@ Tile::Tile(int fishCount, int x, int y) {
 int Tile::getFishCount() const {
     return this->fishCount;
 }
+int Tile::getXCoordinate()  {
+    return this->xCoordinate;
+}
+int Tile::getYCoordinate() {
+    return this->yCoordinate;
+}
 
 void Tile::setFishCount(int count) {
     this->fishCount = count;

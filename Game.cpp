@@ -34,6 +34,7 @@ void Game::drawGameBoard() {
     const std::vector<std::vector<Tile>> &tiles = gameBoard->getBoard();
     const int tileSize = size > 20 ? 20 : 40; // Adjust this value to set the size of each tile.
 
+    const int fishSize = tileSize / 6; // adjust this value to change a fishTile size;
     window->clear(); // Clear the window before drawing.
 
     // Iterate through tiles and draw them
@@ -55,9 +56,9 @@ void Game::drawGameBoard() {
                 // Draw fish as small squares inside the tile
                 int fishCount = tiles[i][j].getFishCount();
                 for (int k = 0; k < fishCount; k++) {
-                    sf::RectangleShape fishRect(sf::Vector2f(tileSize / 4, tileSize / 4));
+                    sf::RectangleShape fishRect(sf::Vector2f(fishSize, fishSize));
                     fishRect.setFillColor(sf::Color::Magenta); // Set fish color
-                    fishRect.setPosition(j * tileSize + k * (tileSize / 4) + k*3, i * tileSize + tileSize/2);
+                    fishRect.setPosition(1 + j * tileSize + k * (fishSize) + k*3, i * tileSize + tileSize/2);
                     window->draw(fishRect);
                 }
             }
