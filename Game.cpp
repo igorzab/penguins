@@ -3,6 +3,8 @@
 //
 
 #include "Game.h"
+#include <chrono>
+#include <thread>
 
 Game::Game(sf::RenderWindow *window, int numPlayers, int boardSize) {
     this->numPlayers = numPlayers;
@@ -25,7 +27,9 @@ void Game::play() {
 
             drawGameBoard();
             makeMove();
-
+        std::chrono::milliseconds timespan(200);
+        std::this_thread::sleep_for(timespan);
+        this->gameBoard = new GameBoard(size);
     }
 
 }

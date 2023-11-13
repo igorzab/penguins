@@ -22,24 +22,6 @@ std::vector<std::vector<Tile>> GameBoard::getBoard() {
     return this->tiles;
 }
 
-int getRandomNumber(int min, int max) {
-    unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-    srand(seed);
-
-    int randomizedNumber = rand() % (max - min) + min; // ???
-    return randomizedNumber;
-}
-
-bool isCloserToZero(double distance) {
-    cout << distance << endl;
-    if (distance < 10) {
-        int random = getRandomNumber(1, 10);
-        if (random < 5) {
-            return true;
-        }
-    }
-    return false;
-}
 
 
 double generateRandomNumber() {
