@@ -79,11 +79,6 @@ void play(sf::RenderWindow *window, bool gameOver, int size) {
         gameboard.tiles[i] = (Tile *) malloc(size * sizeof(Tile));
     }
     randomizeField(&gameboard);
-    for(int i = 0; i < size; i++){
-        for (int j = 0; j < size; j++) {
-            std::cout << gameboard.tiles[j][i].fishCount << std::endl;
-        }
-    }
     while (window->isOpen() || !gameOver) {
 
         sf::Event event;
