@@ -12,18 +12,43 @@
 
 #include <random>
 #include <ctime>
-#include <iostream>
-using namespace std;
-class GameBoard {
-public:
-    GameBoard(int size);
-    void draw();
-    void randomizeField();
-    std::vector<std::vector<Tile>> getBoard();
-private:
-    int size;
-    std::vector<std::vector<Tile>> tiles;
+//#include <iostream>
+//using namespace std;
+//class GameBoard {
+//public:
+//    GameBoard(int size);
+//    void draw();
+//    void randomizeField();
+//    std::vector<std::vector<Tile>> getBoard();
+//private:
+//    int size;
+//    std::vector<std::vector<Tile>> tiles;
+//};
+
+
+struct Tile {
+    int fishCount;
+    int x;
+    int y;
 };
 
+typedef struct Tile Tile;
+
+struct GameBoard {
+    int size;
+    Tile** tiles;
+};
+
+typedef struct GameBoard GameBoard;
+
+
+double generateRandomNumber();
+
+int createRandomFishAmount();
+
+double gaussian2D(double x, double y, double centerX, double centerY, double stddevX, double stddevY);
+
+void randomizeField(GameBoard* gameBoard);
+void freeGameBoard(GameBoard* gameBoard);
 
 #endif //PENGUINS2_GAMEBOARD_H
