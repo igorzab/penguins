@@ -3,47 +3,23 @@
 //
 
 #include "Game.h"
+#include <chrono>
+#include <thread>
+#include "Game.h"
 
-Game::Game(sf::RenderWindow *window, int numPlayers, int boardSize) {
-    this->numPlayers = numPlayers;
-    this->size = boardSize;
-    this->gameBoard = new GameBoard(size);
-    this->gameOver = false;
-    this->currentPhase = 0; // 0 -> Placing penguins; 1 -> playing; 2 -> gameOver;
-    this->window = window;
-}
-
-void Game::play() {
-    while (window->isOpen() || !gameOver) {
-
-        sf::Event event;
-        while (window->pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window->close();
-        }
-        window->clear(sf::Color::White);
-
-            drawGameBoard();
-            makeMove();
-
-    }
-
-}
-
-void Game::drawGameBoard() {
-    const std::vector<std::vector<Tile>> &tiles = gameBoard->getBoard();
+void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) {
     const int tileSize = size > 20 ? 20 : 40; // Adjust this value to set the size of each tile.
 
     const int fishSize = tileSize / 6; // adjust this value to change a fishTile size;
     window->clear(); // Clear the window before drawing.
 
     // Iterate through tiles and draw them
-    for (int i = 0; i < tiles.size(); i++) {
-        for (int j = 0; j < tiles[i].size(); j++) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
             sf::RectangleShape tileRect(sf::Vector2f(tileSize, tileSize));
             tileRect.setPosition(j * tileSize, i * tileSize);
 
-            if (tiles[i][j].getFishCount() == -1) { // Water
+            if (board->tiles[i][j].fishCount == -1) { // Water
                 tileRect.setFillColor(sf::Color::Blue);
 
 
@@ -54,21 +30,21 @@ void Game::drawGameBoard() {
 
                 window->draw(tileRect);
                 // Draw fish as small squares inside the tile
-                int fishCount = tiles[i][j].getFishCount();
+                int fishCount = board->tiles[i][j].fishCount;
                 for (int k = 0; k < fishCount; k++) {
                     sf::RectangleShape fishRect(sf::Vector2f(fishSize, fishSize));
                     fishRect.setFillColor(sf::Color::Magenta); // Set fish color
-                    fishRect.setPosition(1 + j * tileSize + k * (fishSize) + k*3, i * tileSize + tileSize/2);
+                    fishRect.setPosition(1 + j * tileSize + k * (fishSize) + k * 3, i * tileSize + tileSize / 2);
                     window->draw(fishRect);
                 }
             }
         }
     }
     // Draw the grid lines
-    for (int i = 0; i <= tiles.size(); i++) {
+    for (int i = 0; i <= size; i++) {
         sf::Vertex line[] = {
                 sf::Vertex(sf::Vector2f(0, i * tileSize)),
-                sf::Vertex(sf::Vector2f(tiles.size() * tileSize, i * tileSize))
+                sf::Vertex(sf::Vector2f(size * tileSize, i * tileSize))
         };
         line[0].color = sf::Color::Black;
         line[1].color = sf::Color::Black;
@@ -76,7 +52,7 @@ void Game::drawGameBoard() {
 
         sf::Vertex line2[] = {
                 sf::Vertex(sf::Vector2f(i * tileSize, 0)),
-                sf::Vertex(sf::Vector2f(i * tileSize, tiles.size() * tileSize))
+                sf::Vertex(sf::Vector2f(i * tileSize, size * tileSize))
         };
 
         line2[0].color = sf::Color::Black;
@@ -88,12 +64,37 @@ void Game::drawGameBoard() {
     window->display(); // Display the rendered frame.
 }
 
-void Game::makeMove() {
+void makeMove(int size) {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+        }
+    }
+}
+
+void play(sf::RenderWindow *window, bool gameOver, int size) {
+    struct GameBoard gameboard;
+    gameboard.size = size;
+    gameboard.tiles = (Tile **) malloc(size * sizeof(Tile *));
+    for (int i = 0; i < size; i++) {
+        gameboard.tiles[i] = (Tile *) malloc(size * sizeof(Tile));
+    }
+    randomizeField(&gameboard);
     for(int i = 0; i < size; i++){
         for (int j = 0; j < size; j++) {
-//            cout << gameBoard->getBoard()[i][j].getFishCount()+1 << "  ";
+            std::cout << gameboard.tiles[j][i].fishCount << std::endl;
         }
-//        cout << endl;
     }
-//    gameOver = 1;
+    while (window->isOpen() || !gameOver) {
+
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+        }
+        window->clear(sf::Color::White);
+
+        drawGameBoard(&gameboard, 50, window);
+        makeMove(50);
+    }
+
 }
