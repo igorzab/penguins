@@ -88,8 +88,8 @@ void play(sf::RenderWindow *window, bool gameOver, int size) {
         }
         window->clear(sf::Color::White);
 
-        drawGameBoard(&gameboard, 50, window);
-        makeMove(50);
+        drawGameBoard(&gameboard, size, window);
+        makeMove(size);
     }
 
 }
