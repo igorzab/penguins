@@ -23,3 +23,15 @@
 //
 
 #endif //PENGUINS2_PENGUIN_H
+
+struct Penguin {
+    int xCoordinate;
+    int yCoordinate;
+};
+
+int penguinID;
+int amountOfPenguins;
+
+int getPenguinID();
+
+void setPenguinID(int ID);
