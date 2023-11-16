@@ -23,7 +23,9 @@ int amountOfPenguins;
 extern struct Player* currentPlayer;
 struct Player* getCurrentPlayer(void);
 void setCurrentPlayer(struct Player* players);
-struct Board getPossibleMoves(struct Board* board, struct Player* current);
+struct GameBoard getPossibleMoves(struct GameBoard *gameBoard, struct Player* current);
 
 struct Player* getPlayer(int playerID);
 struct Player* setAllPlayers(void);
+
+int fixscanf();

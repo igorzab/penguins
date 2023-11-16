@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "movement.h"
-#include "player.h"
-#include "Penguin.h"
-#include "colors.h"
 
 
 #define MOVE_IS_NOT_POSSIBLE 0
@@ -11,47 +8,41 @@
 
 
 
-void makeAMove(/*структура игрового поля*/){
+void makeAMove(struct GameBoard *gameBoard){
 
 
     struct Player* current = getCurrentPlayer();
-    int ID = getPenguidID();
+    int ID = getPenguinID();
 
-    int currentX = current->penguins[ID].xCoordinate-1;
-    int currentY = current->penguins[ID].yCoordinate-1;
+    int currentX = current->penguins[ID].xCoordinate;
+    int currentY = current->penguins[ID].yCoordinate;
 
-    struct Board possibleMoves = getPossibleMoves(gameBoard, current);
+    struct GameBoard possibleMoves = getPossibleMoves(gameBoard, current);
 
     int X;
     int Y;
 
-    do {
-        printf("\nInput number of the row to move (ex. 1): ");
+    printf("\nInput number of the row to move: ");
+    X = fixscanf();
+    printf("Input number of the column to move: ");
+    Y = fixscanf();
+    while (possibleMoves.tiles[X][Y].fishCount > -1){
+        printf("\nInput number of the row to move: ");
         X = fixscanf();
-        X--;
-        printf("Input number of the column to move (ex. A): ");
+        printf("Input number of the column to move: ");
         Y = fixscanf();
-        Y--;
-    } while (gameBoard->grid[X][Y] != possibleMoves.grid[X][Y]);
-    board->grid[currentX][currentY] = '_';
-
-
-    board->grid[X][Y] = 'P';
-
-    current->penguins[ID].coordinateX = X + 1;
-    current->penguins[ID].coordinateY = (char)('A' + Y);
-
-
-    if ('1' == possibleMoves.grid[X][Y]) {
-        current->points += 1;
     }
 
-    if ('2' == possibleMoves.grid[X][Y]) {
-        current->points += 2;
-    }
+    gameBoard->tiles[currentX][currentY].fishCount = -1;
 
-    if ('3' == possibleMoves.grid[X][Y]) {
-        current->points += 3;
+
+    gameBoard->tiles[X][Y].fishCount = 4;
+
+    current->penguins[ID].xCoordinate = X;
+    current->penguins[ID].yCoordinate = Y;
+
+    if(gameBoard->tiles[currentX][currentY].fishCount > 0 && gameBoard->tiles[currentX][currentY].fishCount !=4){
+        current->points += gameBoard->tiles[currentX][currentY].fishCount;
     }
 
 };

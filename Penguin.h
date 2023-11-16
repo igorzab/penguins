@@ -24,7 +24,6 @@
 
 #endif //PENGUINS2_PENGUIN_H
 
-/*
 struct Penguin {
     int xCoordinate;
     int yCoordinate;
@@ -36,28 +35,3 @@ int amountOfPenguins;
 int getPenguinID();
 
 void setPenguinID(int ID);
-
-};
- penguin.c: всё что ниже
-void setPenguinID(int ID) {
-	penguinID = ID;
-
-int getPenguinID() {
-    return penguinID;
-};
-void setAmountOfPenguins() {
-	int pengus;
-	clear();
-	printf("Please, input the amount of penguins (at least 1, max 3): ");
-	pengus = fixscanf();
-	while (pengus < 1 || pengus > 3) {
-		clear();
-		setColor(LIGHT_RED);
-		printf("ERROR: incorrect penguins amount. Please, type it again (at least 1, max 3): ");
-		setColor(LIGHT_GRAY);
-		pengus = fixscanf();
-	}
-	clear();
-	amountOfPenguins = pengus;
-};
- */

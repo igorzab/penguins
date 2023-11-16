@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "colors.h"
 #include "player.h"
 #define MOVE_IS_NOT_POSSIBLE 0
 #define MOVE_IS_POSSIBLE 1
@@ -24,18 +23,10 @@ void setCurrentPlayer(struct Player* player){
 
 struct Player* setAllPlayers(){
     for (int i = 0; i < amountOfPlayers; i++) {
-        printf("Hi Player %d! How should I call you?: ", i + 1);
+        printf("Player %d! Enter your name: ", i + 1);
         char *name = malloc(sizeof(char) * 20);
         name[strcspn(name, "\r\n")] = 0;
 
-        int color = getPlayerColor();
-        while(color == NO_COLOR) {
-            setColor(12);
-            printf("ERROR: color was not found.\n");
-            setColor(7);
-            color = getPlayerColor();
-        }
-        players[i].color = color;
         players[i].name = name;
         players[i].id = i+1;
         players[i].points = 0;
@@ -50,17 +41,17 @@ struct Player* getPlayer(int playerID) {
     return &players[playerID];
 }
 
-struct Board getPossibleMoves(struct Board* gameBoard, struct Player* current) {
+struct GameBoard getPossibleMoves(struct GameBoard *gameBoard, struct Player* current) {
 
     struct Board possibleMoves;
 
-    possibleMoves.grid = malloc(sizeof(*gameBoard->grid) * gameBoard->size);
+    possibleMoves.tiles = malloc(sizeof(*gameBoard->tiles) * gameBoard->size);
     for (int i = 0; i < gameBoard->size; i++)
-        possibleMoves.grid[i] = malloc(sizeof(**gameBoard->grid) * gameBoard->size);
+        possibleMoves.tiles[i] = malloc(sizeof(**gameBoard->tiles) * gameBoard->size);
 
     for (int i = 0; i < gameBoard->size; i++) {
         for (int j = 0; j < gameBoard->size; j++)
-            possibleMoves.grid[i][j] = '0';
+            possibleMoves.tiles[i][j].fishCount = -1;
     }
 
     if (current->numberOfPenguins == 0) {
@@ -69,33 +60,45 @@ struct Board getPossibleMoves(struct Board* gameBoard, struct Player* current) {
 
     int pengID = getPenguinID();
 
-    int x = current->penguins[pengID].xCoordinate - 1;
-    int y = current->penguins[pengID].yCoordinate - 1;
+    int x = current->penguins[pengID].xCoordinate;
+    int y = current->penguins[pengID].yCoordinate;
 
     for (int i = x + 1; i < gameBoard->size; i++) {
-        if (gameBoard->grid[i][y] == water || gameBoard->grid[i][y] == playerOnIceFloe)
+        if (gameBoard->tiles[i][y].fishCount == -1 || gameBoard->tiles[i][y].fishCount == 4)
             break;
         possibleMoves.grid[i][y] = gameBoard->grid[i][y];
     }
 
     for (int i = x - 1; i >= 0; i--) {
-        if (gameBoard->grid[i][y] == water || gameBoard->grid[i][y] == playerOnIceFloe)
+        if (gameBoard->tiles[i][y].fishCount == -1 || gameBoard->tiles[i][y].fishCount == 4)
             break;
         possibleMoves.grid[i][y] = gameBoard->grid[i][y];
     }
 
     for (int j = y + 1; j < gameBoard->size; j++) {
-        if (gameBoard->grid[x][j] == water || gameBoard->grid[x][j] == playerOnIceFloe)
+        if (gameBoard->tiles[x][j].fishCount == -1 || gameBoard->tiles[x][j].fishCount == 4)
             break;
         possibleMoves.grid[x][j] = gameBoard->grid[x][j];
     }
 
     for (int j = y - 1; j >= 0; j--) {
-        if (gameBoard->grid[x][j] == water || gameBoard->grid[x][j] == playerOnIceFloe)
+        if (gameBoard->tiles[x][j].fishCount == -1 || gameBoard->tiles[x][j].fishCount == 4)
             break;
         possibleMoves.grid[x][j] = gameBoard->grid[x][j];
     }
-
-    possibleMoves.grid[x][y] = water;
     return possibleMoves;
+}
+
+int fixscanf() {
+    int variable;
+    int readNr = 0;
+    while (readNr != 1) {
+
+        readNr = scanf("%d", &variable);
+        if (readNr != 1) {
+            printf("ERROR: please input a number: \n");
+        }
+        scanf("%*[^\n]");
+    }
+    return variable;
 }
