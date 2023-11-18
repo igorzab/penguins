@@ -14,7 +14,6 @@ int main() {
     int windowSize = size > 20 ? size*20 : size*40;
     sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "Rybka");
     // Add your game logic here
-
     play(&window, numPlayers, size);
 
 
