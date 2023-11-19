@@ -13,7 +13,6 @@ find_package(SFML REQUIRED system window graphics)
 add_executable(penguins2 main.cpp
         Tile.cpp
         Tile.h
-        Penguin.cpp
         Penguin.h
         GameBoard.cpp
         GameBoard.h

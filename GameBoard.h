@@ -4,7 +4,7 @@
 
 #ifndef PENGUINS2_GAMEBOARD_H
 #define PENGUINS2_GAMEBOARD_H
-
+#pragma once
 
 #include <vector>
 #include "Tile.h"

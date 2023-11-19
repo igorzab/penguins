@@ -4,7 +4,7 @@
 
 #ifndef PENGUINS2_PENGUIN_H
 #define PENGUINS2_PENGUIN_H
-
+#pragma once
 
 #include "Tile.h"
 //
