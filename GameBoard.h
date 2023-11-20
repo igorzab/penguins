@@ -39,6 +39,11 @@ struct GameBoard {
     Tile** tiles;
 };
 
+struct Pair {
+    int x;
+    int y;
+};
+
 typedef struct GameBoard GameBoard;
 
 

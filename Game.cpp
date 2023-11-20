@@ -71,6 +71,31 @@ void makeMove(int size) {
     }
 }
 
+
+
+Pair getPressedTile(int clickX, int clickY, GameBoard *gameBoard){
+    const int tileSize = gameBoard->size > 20 ? 20 : 40;
+    int xFound = 0, yFound = 0;
+    for (int i = 0; i < gameBoard->size; i++) {
+        int yModulus = (i+1) * tileSize;
+        int j = 0;
+        while(!xFound && j < gameBoard->size){
+            int xModulus = (j+1) * tileSize;
+            if(clickX > xModulus - tileSize && clickX < xModulus) {
+                xFound = j;
+                break;
+            }
+            j++;
+        }
+        if(clickY > yModulus - tileSize && clickY < yModulus) {
+            yFound = i;
+            break;
+        }
+    }
+    struct Pair pair = {xFound, yFound};
+    return pair;
+}
+
 void play(sf::RenderWindow *window, bool gameOver, int size) {
     struct GameBoard gameboard;
     gameboard.size = size;
@@ -85,6 +110,9 @@ void play(sf::RenderWindow *window, bool gameOver, int size) {
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window->close();
+            if (event.type == sf::Event::MouseButtonPressed){
+                getPressedTile(event.mouseButton.x, event.mouseButton.y, &gameboard); // returns pair structure. do whatever you want.
+            }
         }
         window->clear(sf::Color::White);
 
