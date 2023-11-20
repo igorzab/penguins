@@ -2,8 +2,12 @@
 #include <stdlib.h>
 #include <math.h>
 #include "GameBoard.h"
+#include <iostream>
+
 double generateRandomNumber() {
-    return (double)rand() / RAND_MAX;
+    double randomized = (double)rand() / RAND_MAX;
+    std::cout << "random: " << randomized << std::endl;
+    return randomized;
 }
 
 int createRandomFishAmount() {
@@ -25,6 +29,7 @@ double gaussian2D(double x, double y, double centerX, double centerY, double std
 }
 
 void randomizeField(GameBoard* gameBoard) {
+    srand((unsigned int)time(NULL));
     int size = gameBoard->size;
     double centerX = size / 2.0;
     double centerY = size / 2.0;

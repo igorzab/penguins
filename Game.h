@@ -7,6 +7,7 @@
 #include <iostream>
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
+#include "SFML/Audio.hpp"
 #include "Penguin.h"
 #include "Tile.h"
 #include "GameBoard.h"
@@ -41,6 +42,6 @@ void makeMove(int size);
 
 void play(sf::RenderWindow *window, bool gameOver, int size);
 
-
+Pair getPressedTile(int x, int y, GameBoard *gameBoard);
 
 #endif //PENGUINS2_GAME_H
