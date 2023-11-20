@@ -7,6 +7,7 @@
 #include <iostream>
 #include "SFML/Graphics.hpp"
 #include "SFML/System.hpp"
+#include "SFML/Audio.hpp"
 #include "Penguin.h"
 #include "Tile.h"
 #include "GameBoard.h"
