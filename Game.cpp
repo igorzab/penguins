@@ -14,8 +14,8 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
     window->clear(); // Clear the window before drawing.
 
     // Iterate through tiles and draw them
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
+    for (int j = 0; j < size; j++) {
+        for (int i = 0; i < size; i++) {
             sf::RectangleShape tileRect(sf::Vector2f(tileSize, tileSize));
             tileRect.setPosition(j * tileSize, i * tileSize);
 
@@ -106,7 +106,7 @@ Pair getPressedTile(int clickX, int clickY, GameBoard *gameBoard) {
             break;
         }
     }
-    struct Pair pair = {xFound, yFound};
+    struct Pair pair = {yFound, xFound};
     return pair;
 }
 
