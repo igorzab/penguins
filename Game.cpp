@@ -81,13 +81,13 @@ Pair getPressedTile(int clickX, int clickY, GameBoard *gameBoard){
         int j = 0;
         while(!xFound && j < gameBoard->size){
             int xModulus = (j+1) * tileSize;
-            if(clickX > xModulus - tileSize && clickX < xModulus) {
+            if(clickX > xModulus - tileSize && clickX <= xModulus) {
                 xFound = j;
                 break;
             }
             j++;
         }
-        if(clickY > yModulus - tileSize && clickY < yModulus) {
+        if(clickY > yModulus - tileSize && clickY <= yModulus) {
             yFound = i;
             break;
         }
