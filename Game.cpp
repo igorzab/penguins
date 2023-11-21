@@ -115,7 +115,6 @@ void play(sf::RenderWindow *window, bool gameOver, int size) {
             if (event.type == sf::Event::Closed)
                 window->close();
             if (event.type == sf::Event::MouseButtonPressed){
-                std::cout << "bitton pressed, playing sound...\n";
                 sound.play();
                 getPressedTile(event.mouseButton.x, event.mouseButton.y, &gameboard); // returns pair structure. do whatever you want.
             }
