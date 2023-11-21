@@ -133,8 +133,6 @@ void initializePenguins(GameBoard *gameBoard, int numPlayers, int numPenguins) {
 void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
 
     bool gameOver = false;
-    bool boardGenerated = false;
-    bool penguinsInitialized = false;
     bool penguinsPlaced = false;
     int currentPlacingPlayer = 0;
 
@@ -151,16 +149,10 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
     for (int i = 0; i < size; i++) {
         gameboard.tiles[i] = (Tile *) malloc(size * sizeof(Tile));
     }
+    randomizeField(&gameboard);
+    initializePlayers(&gameboard, numPlayers, numPenguins);
+    initializePenguins(&gameboard, numPlayers, numPenguins);
     while (window->isOpen() || !gameOver) {
-        if (!boardGenerated) {
-            randomizeField(&gameboard);
-            boardGenerated = true;
-        }
-        if (!penguinsInitialized) {
-            initializePlayers(&gameboard, numPlayers, numPenguins);
-            initializePenguins(&gameboard, numPlayers, numPenguins);
-            penguinsInitialized = true;
-        }
 
         sf::Event event;
         while (window->pollEvent(event)) {
@@ -174,7 +166,6 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                     Player currentPlayer = gameboard.players[currentPlacingPlayer];
                     int counter = 0;
                     while (counter < numPenguins) {
-
                         if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) &&
                             gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -1 &&
                             gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -2) {
@@ -183,8 +174,11 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                             gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
                             drawAPenguin(pressedTile.x, pressedTile.y, &gameboard);
                             gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer = currentPlacingPlayer + 1;
-                            if (currentPlacingPlayer == numPlayers - 1 && counter == numPenguins - 1)
+                            if (currentPlacingPlayer == numPlayers - 1 && counter == numPenguins - 1) {
                                 penguinsPlaced = true;
+                            } else {
+                                std::cout << "Player #" << currentPlacingPlayer + 1 << ", plz place ur penguin.\n";
+                            }
                             currentPlacingPlayer++;
                             if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
                             break;
