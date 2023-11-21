@@ -142,7 +142,7 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
     int currentPlacingPlayer = 0;
     sf::SoundBuffer buffer;
     sf::Sound sound;
-    if (!buffer.loadFromFile("G:\\Politechnicka Warszawska Study\\GitLab\\audio\\move.wav")) std::cout << "error";
+    if (!buffer.loadFromFile("/Users/igorzab/CLionProjects/epfu/audio/move.wav")) std::cout << "error";
     sound.setBuffer(buffer);
 
     struct GameBoard gameboard;
@@ -175,7 +175,7 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                     int counter = 0;
                     while (counter < numPenguins) {
 
-                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) && gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -1) {
+                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) && gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -1 && gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -2) {
                             currentPlayer.penguins[counter].x = pressedTile.x;
                             currentPlayer.penguins[counter].y = pressedTile.y;
                             gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
