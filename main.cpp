@@ -1,7 +1,6 @@
 #include <iostream>
 
 #include "Game.h"
-#include "Game.h"
 
 int main() {
     int numPlayers = 2;
@@ -14,8 +13,6 @@ int main() {
 //    std::cin >> size;
     int windowSize = size > 20 ? size*20 : size*40;
     sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "Rybka");
-    // Add your game logic here
-
     play(&window, numPlayers,numPenguins, size);
 
 

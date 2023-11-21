@@ -15,9 +15,7 @@
 
 void drawGameBoard(struct GameBoard* board, int size, sf::RenderWindow *window);
 
-void placePenguins(GameBoard* gameBoard, Player* player, int numPenguins, Pair pressedTile);
-
-void initializePlayers(GameBoard* gameBoard, int numPlayers, int numPenguins, Pair pressedTile);
+void initializePlayers(GameBoard* gameBoard, int numPlayers, int numPenguins);
 
 void drawAPenguin(int x, int y, GameBoard *gameBoard);
 

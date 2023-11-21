@@ -2,8 +2,6 @@
 // Created by igorz on 11/5/2023.
 //
 #include "Game.h"
-#include <chrono>
-#include <thread>
 
 #define NUM_OF_PENGUINS 2
 
@@ -82,9 +80,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
 }
 
 void drawAPenguin(int x, int y, GameBoard *gameBoard) {
-
-        gameBoard->tiles[x][y].fishCount = -2; // penguin macros
-
+    gameBoard->tiles[x][y].fishCount = -2; // penguin macros
 }
 
 Pair getPressedTile(int clickX, int clickY, GameBoard *gameBoard) {
@@ -135,19 +131,23 @@ void initializePenguins(GameBoard *gameBoard, int numPlayers, int numPenguins) {
 }
 
 void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
+
     bool gameOver = false;
     bool boardGenerated = false;
     bool penguinsInitialized = false;
     bool penguinsPlaced = false;
     int currentPlacingPlayer = 0;
+
     sf::SoundBuffer buffer;
     sf::Sound sound;
+
     if (!buffer.loadFromFile("/Users/igorzab/CLionProjects/epfu/audio/move.wav")) std::cout << "error";
     sound.setBuffer(buffer);
 
     struct GameBoard gameboard;
     gameboard.size = size;
     gameboard.tiles = (Tile **) malloc(size * sizeof(Tile *));
+
     for (int i = 0; i < size; i++) {
         gameboard.tiles[i] = (Tile *) malloc(size * sizeof(Tile));
     }
@@ -175,7 +175,9 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                     int counter = 0;
                     while (counter < numPenguins) {
 
-                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) && gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -1 && gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -2) {
+                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) &&
+                            gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -1 &&
+                            gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -2) {
                             currentPlayer.penguins[counter].x = pressedTile.x;
                             currentPlayer.penguins[counter].y = pressedTile.y;
                             gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
@@ -191,48 +193,11 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                     }
 
                 }
+
             }
             window->clear(sf::Color::White);
 
             drawGameBoard(&gameboard, size, window);
         }
-
     }
-/*
-    while (window->isOpen() || !gameOver) {
-        Pair pressedTile = {-1, -1};
-        sf::Event event;
-        while (window->pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window->close();
-            }
-            if (event.type == sf::Event::MouseButtonPressed) {
-                //std::cout << "button pressed, playing sound...\n";
-                //sound.play();
-
-                pressedTile = getPressedTile(event.mouseButton.x, event.mouseButton.y, &gameboard);
-                placementPhaseStart(&gameboard, numPlayers, numPenguins, pressedTile);
-                drawAPenguin(pressedTile.x, pressedTile.y, &gameboard);
-            }
-            for (int i = 1; i <= NUM_OF_PLAYERS; i++){
-                for (int j = 1; j <= NUM_OF_PENGUINS; j++ ){
-                    Tile t = gameboard.tiles[i][j];
-                    if (t.hasPenguin){
-                        std::cout << t.x;
-                    }
-                }
-            }
-        }
-
-
-        window->clear(sf::Color::White);
-
-        drawGameBoard(&gameboard, size, window);
-
-        if (pressedTile.x != -1 && pressedTile.y != -1) {
-            placementPhaseStart(&gameboard, numPlayers, numPenguins, pressedTile);
-            pressedTile = {-1, -1};
-        }
-    }
-    */
 }

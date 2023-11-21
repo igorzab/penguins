@@ -4,38 +4,20 @@
 #pragma once
 #ifndef PENGUINS2_GAMEBOARD_H
 #define PENGUINS2_GAMEBOARD_H
-#pragma once
 
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include "iostream"
 #include "Player.h"
-//#include <iostream>
-//using namespace std;
-//class GameBoard {
-//public:
-//    GameBoard(int size);
-//    void draw();
-//    void randomizeField();
-//    std::vector<std::vector<Tile>> getBoard();
-//private:
-//    int size;
-//    std::vector<std::vector<Tile>> tiles;
-//};
+#include "Tile.h"
 
 
-struct Tile {
-    int fishCount;
-    int x;
-    int y;
-    int owningPlayer;
-    bool allPenguisPlaced;
-};
-
-typedef struct Tile Tile;
 
 struct GameBoard {
     int size;
-    Tile** tiles;
-    Player* players; // Array of players on the game board
+    Tile **tiles;
+    Player *players; // Array of players on the game board
 };
 
 struct Pair {
@@ -48,13 +30,10 @@ typedef struct GameBoard GameBoard;
 
 double generateRandomNumber();
 
-
-
 int createRandomFishAmount();
 
 double gaussian2D(double x, double y, double centerX, double centerY, double stddevX, double stddevY);
 
-void randomizeField(GameBoard* gameBoard);
-void freeGameBoard(GameBoard* gameBoard);
+void randomizeField(GameBoard *gameBoard);
 
 #endif //PENGUINS2_GAMEBOARD_H
