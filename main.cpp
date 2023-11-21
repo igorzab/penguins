@@ -6,6 +6,7 @@
 int main() {
     int numPlayers = 2;
     int size = 51;
+    int numPenguins = 3;
 
 //    std::cout << "Plz enter a desired num of players: ";
 //    std::cin >> numPlayers;
@@ -14,7 +15,8 @@ int main() {
     int windowSize = size > 20 ? size*20 : size*40;
     sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "Rybka");
     // Add your game logic here
-    play(&window, numPlayers, size);
+
+    play(&window, numPlayers,numPenguins, size);
 
 
     return 0;

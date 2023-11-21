@@ -1,17 +1,13 @@
 //
 // Created by igorz on 11/5/2023.
 //
-
+#pragma once
 #ifndef PENGUINS2_GAMEBOARD_H
 #define PENGUINS2_GAMEBOARD_H
 #pragma once
 
-#include <vector>
-#include "Tile.h"
 
-
-#include <random>
-#include <ctime>
+#include "Player.h"
 //#include <iostream>
 //using namespace std;
 //class GameBoard {
@@ -30,6 +26,8 @@ struct Tile {
     int fishCount;
     int x;
     int y;
+    int owningPlayer;
+    bool allPenguisPlaced;
 };
 
 typedef struct Tile Tile;
@@ -37,6 +35,7 @@ typedef struct Tile Tile;
 struct GameBoard {
     int size;
     Tile** tiles;
+    Player* players; // Array of players on the game board
 };
 
 struct Pair {
@@ -48,6 +47,8 @@ typedef struct GameBoard GameBoard;
 
 
 double generateRandomNumber();
+
+
 
 int createRandomFishAmount();
 
