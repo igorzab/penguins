@@ -1,10 +1,6 @@
-//
-// Created by igorz on 11/5/2023.
-//
 #pragma once
 #ifndef PENGUINS2_TILE_H
 #define PENGUINS2_TILE_H
-
 
 //class Tile {
 //public:

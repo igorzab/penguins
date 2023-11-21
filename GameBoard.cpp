@@ -6,7 +6,6 @@
 
 double generateRandomNumber() {
     double randomized = (double)rand() / RAND_MAX;
-    std::cout << "random: " << randomized << std::endl;
     return randomized;
 }
 
