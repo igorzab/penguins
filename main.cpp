@@ -3,8 +3,8 @@
 #include "Game.h"
 
 int main() {
-    int numPlayers = 2;
-    int size = 51;
+    int numPlayers = 9;
+    int size = 15;
     int numPenguins = 3;
 
 //    std::cout << "Plz enter a desired num of players: ";

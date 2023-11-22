@@ -2,8 +2,7 @@
 // Created by igorz on 11/5/2023.
 //
 #include "Game.h"
-
-#define NUM_OF_PENGUINS 2
+#include "Colors.h"
 
 void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) {
     const int tileSize = size > 20 ? 20 : 40; // Adjust this value to set the size of each tile.
@@ -23,21 +22,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
                 window->draw(tileRect);
             } else if (board->tiles[i][j].fishCount == -2) { //Penguin
 
-                tileRect.setFillColor(sf::Color::White);
-                window->draw(tileRect);
-                sf::Color fillColor = sf::Color::White;
-                switch (board->tiles[i][j].owningPlayer) {
-                    case 1:
-                        fillColor = sf::Color::Red;
-                        break;
-                    case 2:
-                        fillColor = sf::Color::Green;
-                        break;
-                }
-                sf::CircleShape penguinShape(fishSize * 2);
-                penguinShape.setFillColor(fillColor);
-                penguinShape.setPosition(3.5 + j * tileSize, i * tileSize - 4 + tileSize / 2);
-                window->draw(penguinShape);
+                drawPenguinTile(board, size, sf::Color::White, tileRect, window, i, j, fishSize, tileSize);
 
             } else if (board->tiles[i][j].fishCount == -3) { //selectedPenguin
 
@@ -148,11 +133,17 @@ void initializePenguins(GameBoard *gameBoard, int numPlayers, int numPenguins) {
     }
 }
 
+bool badTileOnWay(int x, int y, GameBoard *gameBoard) {
+    if (x < 0 || y < 0) return true;
+    if (gameBoard->tiles[x][y].fishCount == -1) return true;
+    if (gameBoard->tiles[x][y].fishCount == -2) return true;
+    return false;
+}
+
 bool checkLegalMove(int x, int y, Penguin *selected, GameBoard *gameBoard) {
     int penguinX = selected->x;
     int penguinY = selected->y;
-    if (gameBoard->tiles[x][y].fishCount == -1) return false;
-    if (gameBoard->tiles[x][y].fishCount == -2) return false;
+    if (badTileOnWay(x, y, gameBoard)) return false;
     if (penguinX == x) {
         if (abs(y - penguinY) == 1) {
             return true;
@@ -164,6 +155,31 @@ bool checkLegalMove(int x, int y, Penguin *selected, GameBoard *gameBoard) {
     }
     return false;
 }
+
+bool canMove(Penguin *penguin, GameBoard *gameBoard) {
+    if (!badTileOnWay(penguin->x + 1, penguin->y, gameBoard)) return true;
+    if (!badTileOnWay(penguin->x - 1, penguin->y, gameBoard)) return true;
+    if (!badTileOnWay(penguin->x, penguin->y + 1, gameBoard)) return true;
+    if (!badTileOnWay(penguin->x, penguin->y - 1, gameBoard)) return true;
+    return false;
+}
+
+bool movesExist(Player *player, GameBoard *gameBoard, int numPenguins) {
+    for (int i = 0; i < numPenguins; i++) {
+        if (canMove(&player->penguins[i], gameBoard)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins) {
+    for (int i = 0; i < numPlayers; i++) {
+        if (movesExist(&gameBoard->players[i], gameBoard, numPenguins)) return true;
+    }
+    return false;
+}
+
 
 void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
 
@@ -197,15 +213,13 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                 window->close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-                sound.play();
+//                sound.play();
                 Pair pressedTile = getPressedTile(event.mouseButton.x, event.mouseButton.y, &gameboard);
                 if (!penguinsPlaced) {
                     Player currentPlayer = gameboard.players[currentPlacingPlayer];
                     int counter = 0;
                     while (counter < numPenguins) {
-                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) &&
-                            gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -1 &&
-                            gameboard.tiles[pressedTile.x][pressedTile.y].fishCount != -2) {
+                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) && !badTileOnWay(pressedTile.x, pressedTile.y, &gameboard)) {
                             currentPlayer.penguins[counter].x = pressedTile.x;
                             currentPlayer.penguins[counter].y = pressedTile.y;
                             gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
@@ -226,34 +240,52 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
 
                 } else if (!gameOver) {
                     Player currentPlayer = gameboard.players[currentPlacingPlayer];
-                    if (!penguinSelected) {
-                        for (int i = 0; i < numPenguins; i++) {
-                            if (currentPlayer.penguins[i].x == pressedTile.x &&
-                                currentPlayer.penguins[i].y == pressedTile.y) {
-                                selectedPenguin = &currentPlayer.penguins[i];
-                                gameboard.tiles[pressedTile.x][pressedTile.y].fishCount = -3;
-                                penguinSelected = true;
-                                break;
+                    if (movesExist(&currentPlayer, &gameboard, numPenguins)) {
+
+                        if (!penguinSelected) {
+                            for (int i = 0; i < numPenguins; i++) {
+                                if (currentPlayer.penguins[i].x == pressedTile.x &&
+                                    currentPlayer.penguins[i].y == pressedTile.y &&
+                                    canMove(&currentPlayer.penguins[i], &gameboard)) {
+                                    selectedPenguin = &currentPlayer.penguins[i];
+                                    gameboard.tiles[pressedTile.x][pressedTile.y].fishCount = -3;
+                                    penguinSelected = true;
+                                    break;
+                                }
+                            }
+                        } else {
+                            if (checkLegalMove(pressedTile.x, pressedTile.y, selectedPenguin, &gameboard)) {
+
+                                gameboard.tiles[selectedPenguin->x][selectedPenguin->y].fishCount = -1;
+
+                                selectedPenguin->x = pressedTile.x;
+                                selectedPenguin->y = pressedTile.y;
+
+                                gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
+                                drawAPenguin(pressedTile.x, pressedTile.y, &gameboard);
+
+                                gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer = currentPlacingPlayer + 1;
+                                currentPlacingPlayer++;
+                                if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
+                                std::cout << "Player #" << currentPlacingPlayer + 1 << ", plz select a penguin.\n";
+
+                                penguinSelected = false;
                             }
                         }
                     } else {
-                        if (checkLegalMove(pressedTile.x, pressedTile.y, selectedPenguin, &gameboard)) {
-
-                            gameboard.tiles[selectedPenguin->x][selectedPenguin->y].fishCount = -1;
-
-                            selectedPenguin->x = pressedTile.x;
-                            selectedPenguin->y = pressedTile.y;
-
-                            gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
-                            drawAPenguin(pressedTile.x, pressedTile.y, &gameboard);
-
-                            gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer = currentPlacingPlayer + 1;
-                            currentPlacingPlayer++;
-                            if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
-                            std::cout << "Player #" << currentPlacingPlayer + 1 << ", plz select a penguin.\n";
-
-                            penguinSelected = false;
+                        currentPlacingPlayer++;
+                    }
+                    if (!totalMovesExist(&gameboard, numPlayers, numPenguins)) {
+                        gameOver = true;
+                        int totalScore;
+                        int winnerId;
+                        for(int i = 0; i < numPlayers; i++){
+                            if(gameboard.players[i].score > totalScore) {
+                                totalScore = gameboard.players[i].score;
+                                winnerId = i+1;
+                            }
                         }
+                        std::cout << "Winner - player #" << winnerId << " with score = " << totalScore;
                     }
                 }
 
