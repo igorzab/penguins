@@ -3,9 +3,9 @@
 #include "Game.h"
 
 int main() {
-    int numPlayers = 9;
+    int numPlayers = 3;
     int size = 15;
-    int numPenguins = 3;
+    int numPenguins = 1;
 
 //    std::cout << "Plz enter a desired num of players: ";
 //    std::cin >> numPlayers;

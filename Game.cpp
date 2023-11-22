@@ -302,6 +302,7 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                         }
                     } else {
                         currentPlacingPlayer++;
+                        if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
                     }
                     if (!totalMovesExist(&gameboard, numPlayers, numPenguins)) {
                         gameOver = true;
