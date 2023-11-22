@@ -241,7 +241,7 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                 window->close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-//                sound.play();
+                sound.play();
                 Pair pressedTile = getPressedTile(event.mouseButton.x, event.mouseButton.y, &gameboard);
                 if (!penguinsPlaced) {
                     Player currentPlayer = gameboard.players[currentPlacingPlayer];
