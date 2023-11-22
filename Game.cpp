@@ -39,6 +39,24 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
                 penguinShape.setPosition(3.5 + j * tileSize, i * tileSize - 4 + tileSize / 2);
                 window->draw(penguinShape);
 
+            } else if (board->tiles[i][j].fishCount == -3) { //selectedPenguin
+
+                tileRect.setFillColor(sf::Color::Cyan);
+                window->draw(tileRect);
+                sf::Color fillColor = sf::Color::White;
+                switch (board->tiles[i][j].owningPlayer) {
+                    case 1:
+                        fillColor = sf::Color::Red;
+                        break;
+                    case 2:
+                        fillColor = sf::Color::Green;
+                        break;
+                }
+                sf::CircleShape penguinShape(fishSize * 2);
+                penguinShape.setFillColor(fillColor);
+                penguinShape.setPosition(3.5 + j * tileSize, i * tileSize - 4 + tileSize / 2);
+                window->draw(penguinShape);
+
             } else { // Fish
                 tileRect.setFillColor(sf::Color::White); // Set the tile color
 
@@ -130,10 +148,29 @@ void initializePenguins(GameBoard *gameBoard, int numPlayers, int numPenguins) {
     }
 }
 
+bool checkLegalMove(int x, int y, Penguin *selected, GameBoard *gameBoard) {
+    int penguinX = selected->x;
+    int penguinY = selected->y;
+    if (gameBoard->tiles[x][y].fishCount == -1) return false;
+    if (gameBoard->tiles[x][y].fishCount == -2) return false;
+    if (penguinX == x) {
+        if (abs(y - penguinY) == 1) {
+            return true;
+        }
+    } else if (penguinY == y) {
+        if (abs(x - penguinX) == 1) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
 
     bool gameOver = false;
     bool penguinsPlaced = false;
+    bool penguinSelected = false;
+    Penguin *selectedPenguin;
     int currentPlacingPlayer = 0;
 
     sf::SoundBuffer buffer;
@@ -176,16 +213,48 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                             gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer = currentPlacingPlayer + 1;
                             if (currentPlacingPlayer == numPlayers - 1 && counter == numPenguins - 1) {
                                 penguinsPlaced = true;
+                                currentPlacingPlayer = 0;
                             } else {
                                 std::cout << "Player #" << currentPlacingPlayer + 1 << ", plz place ur penguin.\n";
+                                currentPlacingPlayer++;
                             }
-                            currentPlacingPlayer++;
                             if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
                             break;
                         }
                         counter++;
                     }
 
+                } else if (!gameOver) {
+                    Player currentPlayer = gameboard.players[currentPlacingPlayer];
+                    if (!penguinSelected) {
+                        for (int i = 0; i < numPenguins; i++) {
+                            if (currentPlayer.penguins[i].x == pressedTile.x &&
+                                currentPlayer.penguins[i].y == pressedTile.y) {
+                                selectedPenguin = &currentPlayer.penguins[i];
+                                gameboard.tiles[pressedTile.x][pressedTile.y].fishCount = -3;
+                                penguinSelected = true;
+                                break;
+                            }
+                        }
+                    } else {
+                        if (checkLegalMove(pressedTile.x, pressedTile.y, selectedPenguin, &gameboard)) {
+
+                            gameboard.tiles[selectedPenguin->x][selectedPenguin->y].fishCount = -1;
+
+                            selectedPenguin->x = pressedTile.x;
+                            selectedPenguin->y = pressedTile.y;
+
+                            gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
+                            drawAPenguin(pressedTile.x, pressedTile.y, &gameboard);
+
+                            gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer = currentPlacingPlayer + 1;
+                            currentPlacingPlayer++;
+                            if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
+                            std::cout << "Player #" << currentPlacingPlayer + 1 << ", plz select a penguin.\n";
+
+                            penguinSelected = false;
+                        }
+                    }
                 }
 
             }
