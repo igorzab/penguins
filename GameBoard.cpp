@@ -1,9 +1,9 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+
 #include "GameBoard.h"
+
 double generateRandomNumber() {
-    return (double)rand() / RAND_MAX;
+    double randomized = (double) rand() / RAND_MAX;
+    return randomized;
 }
 
 int createRandomFishAmount() {
@@ -20,11 +20,13 @@ int createRandomFishAmount() {
 }
 
 double gaussian2D(double x, double y, double centerX, double centerY, double stddevX, double stddevY) {
-    double exponent = -(pow((x - centerX), 2) / (2 * stddevX * stddevX) + pow((y - centerY), 2) / (2 * stddevY * stddevY));
+    double exponent = -(pow((x - centerX), 2) / (2 * stddevX * stddevX) +
+                        pow((y - centerY), 2) / (2 * stddevY * stddevY));
     return exp(exponent) / (2 * M_PI * stddevX * stddevY);
 }
 
-void randomizeField(GameBoard* gameBoard) {
+void randomizeField(GameBoard *gameBoard) {
+    srand((unsigned int) time(NULL));
     int size = gameBoard->size;
     double centerX = size / 2.0;
     double centerY = size / 2.0;
@@ -32,9 +34,9 @@ void randomizeField(GameBoard* gameBoard) {
     double stddevX = size / 5.0;
     double stddevY = size / 5.0;
 
-    gameBoard->tiles = (Tile**)malloc(size * sizeof(Tile*));
+    gameBoard->tiles = (Tile **) malloc(size * sizeof(Tile *));
     for (int i = 0; i < size; i++) {
-        gameBoard->tiles[i] = (Tile*)malloc(size * sizeof(Tile));
+        gameBoard->tiles[i] = (Tile *) malloc(size * sizeof(Tile));
     }
 
     for (int i = 0; i < size; i++) {
@@ -89,11 +91,4 @@ void randomizeField(GameBoard* gameBoard) {
             if (waterOnWayX && waterOnWayY) gameBoard->tiles[i][j].fishCount = -1;
         }
     }
-}
-
-void freeGameBoard(GameBoard* gameBoard) {
-    for (int i = 0; i < gameBoard->size; i++) {
-        free(gameBoard->tiles[i]);
-    }
-    free(gameBoard->tiles);
 }

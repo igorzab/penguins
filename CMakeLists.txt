@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake_modules)
 
 set(SFML_ROOT C:/libs/SFML)
 
-find_package(SFML REQUIRED system window graphics)
+find_package(SFML REQUIRED system window graphics audio)
 add_executable(penguins2 main.cpp
         Tile.cpp
         Tile.h
@@ -18,6 +18,10 @@ add_executable(penguins2 main.cpp
         GameBoard.h
         Game.cpp
         Game.h
+        Penguin.c
+        Player.c
+        Player.h
+        Colors.h
 )
 
 include_directories(${SFML_INCLUDE_DIR})

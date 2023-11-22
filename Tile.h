@@ -1,27 +1,20 @@
-//
-// Created by igorz on 11/5/2023.
-//
 #pragma once
 #ifndef PENGUINS2_TILE_H
 #define PENGUINS2_TILE_H
 
+/**
+ * @struct Tile
+ * @brief Represents a tile on the game board.
+ *
+ * The Tile structure holds information about a game tile, including the number of fish on the tile,
+ * its coordinates on the game board, and the player ID who owns the tile (if applicable).
+ */
+struct Tile {
+    int fishCount;
+    int x;
+    int y;
+    int owningPlayer;
+};
 
-//class Tile {
-//public:
-//    Tile(int fishCount, int x, int y);
-//    int getFishCount() const;
-//    bool isAccessible() const;
-//    void setFishCount(int count);
-//    int getXCoordinate();
-//    int getYCoordinate();
-//    void changeAccessibleState();
-//private:
-//    int fishCount;
-//    int xCoordinate;
-//    int yCoordinate;
-//    bool accessible;
-//
-//};
-//
-
+typedef struct Tile Tile;
 #endif //PENGUINS2_TILE_H
