@@ -21,6 +21,7 @@ add_executable(penguins2 main.cpp
         Penguin.c
         Player.c
         Player.h
+        Colors.h
 )
 
 include_directories(${SFML_INCLUDE_DIR})

@@ -25,22 +25,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
                 drawPenguinTile(board, size, sf::Color::White, tileRect, window, i, j, fishSize, tileSize);
 
             } else if (board->tiles[i][j].fishCount == -3) { //selectedPenguin
-
-                tileRect.setFillColor(sf::Color::Cyan);
-                window->draw(tileRect);
-                sf::Color fillColor = sf::Color::White;
-                switch (board->tiles[i][j].owningPlayer) {
-                    case 1:
-                        fillColor = sf::Color::Red;
-                        break;
-                    case 2:
-                        fillColor = sf::Color::Green;
-                        break;
-                }
-                sf::CircleShape penguinShape(fishSize * 2);
-                penguinShape.setFillColor(fillColor);
-                penguinShape.setPosition(3.5 + j * tileSize, i * tileSize - 4 + tileSize / 2);
-                window->draw(penguinShape);
+                drawPenguinTile(board, size, sf::Color::Cyan, tileRect, window, i, j, fishSize, tileSize);
 
             } else { // Fish
                 tileRect.setFillColor(sf::Color::White); // Set the tile color
@@ -86,6 +71,49 @@ void drawAPenguin(int x, int y, GameBoard *gameBoard) {
     gameBoard->tiles[x][y].fishCount = -2; // penguin macros
 }
 
+void drawPenguinTile(struct GameBoard *board, int size, sf::Color tileBackgroundColor, sf::RectangleShape tileRect,
+                     sf::RenderWindow *window, int i, int j, int fishSize, int tileSize) {
+
+    tileRect.setFillColor(tileBackgroundColor);
+    window->draw(tileRect);
+    sf::Color fillColor = sf::Color::White;
+    switch (board->tiles[i][j].owningPlayer) {
+        case 1:
+            fillColor = sf::Color::Red;
+            break;
+        case 2:
+            fillColor = Orange;
+            break;
+        case 3:
+            fillColor = LightGreen;
+            break;
+        case 4:
+            fillColor = DarkGreen;
+            break;
+        case 5:
+            fillColor = Gray;
+            break;
+        case 6:
+            fillColor = Pink;
+            break;
+        case 7:
+            fillColor = Brown;
+            break;
+        case 8:
+            fillColor = Purple;
+            break;
+        case 9:
+            fillColor = Sapphire;
+            break;
+    }
+    sf::CircleShape penguinShape(fishSize * 2);
+    penguinShape.setFillColor(fillColor);
+    penguinShape.setPosition(3.5 + j * tileSize, i * tileSize - 4 + tileSize / 2);
+    window->draw(penguinShape);
+
+}
+
+
 Pair getPressedTile(int clickX, int clickY, GameBoard *gameBoard) {
     const int tileSize = gameBoard->size > 20 ? 20 : 40;
     int xFound = 0, yFound = 0;
@@ -116,7 +144,7 @@ void initializePlayers(GameBoard *gameBoard, int numPlayers, int numPenguins) {
         Player *currentPlayer = &gameBoard->players[i];
         currentPlayer->playerID = i + 1;
         currentPlayer->score = 0;
-        currentPlayer->numPenguins = NUM_OF_PENGUINS;
+        currentPlayer->numPenguins = numPenguins;
         currentPlayer->penguins = (Penguin *) malloc(numPenguins * sizeof(Penguin));
     }
 }
@@ -288,7 +316,6 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                         std::cout << "Winner - player #" << winnerId << " with score = " << totalScore;
                     }
                 }
-
             }
             window->clear(sf::Color::White);
 
