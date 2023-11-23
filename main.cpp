@@ -2,7 +2,7 @@
 
 #include "Game.h"
 
-bool validateData(int *x) {
+void validateData(int *x) {
     while (scanf("%d", x) != 1) {
         while (getchar() != '\n');
 
@@ -11,18 +11,24 @@ bool validateData(int *x) {
 }
 
 int main() {
-    int numPlayers = 3;
-    int size = 15;
-    int numPenguins = 1;
+    int numPlayers = -1;
+    int size = -1;
+    int numPenguins = -1;
 
-    printf("Enter the number of players: ");
-    validateData(&numPlayers);
+    while(numPlayers < 0){
+        printf("Enter the number of players: ");
+        validateData(&numPlayers);
+    }
 
-    printf("Enter the number of penguins: ");
-    validateData(&numPenguins);
+    while(numPenguins < 0){
+        printf("Enter the number of penguins: ");
+        validateData(&numPenguins);
+    }
 
-    printf("Enter the field size: ");
-    validateData(&size);
+    while(size < 5 || size < numPlayers * numPenguins){
+        printf("Enter the field size: ");
+        validateData(&size);
+    }
 
     int windowSize = size > 20 ? size * 20 : size * 40;
     sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "Rybka");

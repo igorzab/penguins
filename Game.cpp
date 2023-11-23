@@ -247,7 +247,7 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                     Player currentPlayer = gameboard.players[currentPlacingPlayer];
                     int counter = 0;
                     while (counter < numPenguins) {
-                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) && !badTileOnWay(pressedTile.x, pressedTile.y, &gameboard)) {
+                        if ((currentPlayer.penguins[counter].x > size || currentPlayer.penguins[counter].x == 0) && !badTileOnWay(pressedTile.x, pressedTile.y, &gameboard) && gameboard.tiles[pressedTile.x][pressedTile.y].fishCount == 1) {
                             currentPlayer.penguins[counter].x = pressedTile.x;
                             currentPlayer.penguins[counter].y = pressedTile.y;
                             gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
