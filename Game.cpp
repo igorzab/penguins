@@ -28,7 +28,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
                 drawPenguinTile(board, size, sf::Color::Cyan, tileRect, window, i, j, fishSize, tileSize);
 
             } else { // Fish
-                tileRect.setFillColor(sf::Color::White); // Set the tile color
+                tileRect.setFillColor(sf::Color::White);
 
 
                 window->draw(tileRect);
@@ -51,7 +51,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
         };
         line[0].color = sf::Color::Black;
         line[1].color = sf::Color::Black;
-        window->draw(line, 2, sf::Lines); // Provide 2 as the number of vertices
+        window->draw(line, 2, sf::Lines);
 
         sf::Vertex line2[] = {
                 sf::Vertex(sf::Vector2f(i * tileSize, 0)),
@@ -60,11 +60,11 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
 
         line2[0].color = sf::Color::Black;
         line2[1].color = sf::Color::Black;
-        window->draw(line2, 2, sf::Lines); // Provide 2 as the number of vertices
+        window->draw(line2, 2, sf::Lines);
     }
 
 
-    window->display(); // Display the rendered frame.
+    window->display();
 }
 
 void drawAPenguin(int x, int y, GameBoard *gameBoard) {
@@ -306,7 +306,7 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
                     }
                     if (!totalMovesExist(&gameboard, numPlayers, numPenguins)) {
                         gameOver = true;
-                        int totalScore;
+                        int totalScore = 0;
                         int winnerId;
                         for(int i = 0; i < numPlayers; i++){
                             if(gameboard.players[i].score > totalScore) {
