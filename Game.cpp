@@ -185,10 +185,10 @@ bool checkLegalMove(int x, int y, Penguin *selected, GameBoard *gameBoard) {
 }
 
 bool canMove(Penguin *penguin, GameBoard *gameBoard) {
-    if (!badTileOnWay(penguin->x + 1, penguin->y, gameBoard)) return true;
-    if (!badTileOnWay(penguin->x - 1, penguin->y, gameBoard)) return true;
-    if (!badTileOnWay(penguin->x, penguin->y + 1, gameBoard)) return true;
-    if (!badTileOnWay(penguin->x, penguin->y - 1, gameBoard)) return true;
+    if (penguin->x != gameBoard->size-1 &&!badTileOnWay(penguin->x + 1, penguin->y, gameBoard)) return true;
+    if (penguin->x != 0 && !badTileOnWay(penguin->x - 1, penguin->y, gameBoard)) return true;
+    if (penguin->y != gameBoard->size-1 && !badTileOnWay(penguin->x, penguin->y + 1, gameBoard)) return true;
+    if (penguin->y != 0 && !badTileOnWay(penguin->x, penguin->y - 1, gameBoard)) return true;
     return false;
 }
 
