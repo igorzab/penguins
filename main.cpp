@@ -1,39 +1,39 @@
 #include <iostream>
-
 #include "Game.h"
 
-void validateData(int *x) {
-    while (scanf("%d", x) != 1) {
+// Function to get validated user input
+int getUserInput(const char* prompt) {
+    int value;
+    printf("%s", prompt);
+    while (scanf("%d", &value) != 1) {
         while (getchar() != '\n');
-
         printf("Invalid input. Please enter an integer: ");
     }
+    return value;
 }
 
 int main() {
-    int numPlayers = -1;
-    int size = -1;
-    int numPenguins = -1;
+    // Loop until user enter valid number of players
+    int numPlayers;
+    do {
+        numPlayers = getUserInput("Enter the number of players: ");
+    } while(numPlayers < 0);
 
-    while(numPlayers < 0){
-        printf("Enter the number of players: ");
-        validateData(&numPlayers);
-    }
+    // Loop until user enter valid number of penguins
+    int numPenguins;
+    do {
+        numPenguins = getUserInput("Enter the number of penguins: ");
+    } while(numPenguins < 0);
 
-    while(numPenguins < 0){
-        printf("Enter the number of penguins: ");
-        validateData(&numPenguins);
-    }
-
-    while(size < 5 || size < numPlayers * numPenguins){
-        printf("Enter the field size: ");
-        validateData(&size);
-    }
+    // Loop until user enter valid field size
+    int size;
+    do {
+        size = getUserInput("Enter the field size: ");
+    } while(size < 5 || size < numPlayers*numPenguins);
 
     int windowSize = size > 20 ? size * 20 : size * 40;
     sf::RenderWindow window(sf::VideoMode(windowSize, windowSize), "Rybka");
     play(&window, numPlayers, numPenguins, size);
-
 
     return 0;
 }
