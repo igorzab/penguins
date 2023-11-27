@@ -44,7 +44,6 @@ void drawFirstPage(sf::RenderWindow *window) {
     startButtonSprite.setTexture(startButtonWhite);
     bgsprite.setScale(static_cast<float>(windowSizeVector.x) / background.getSize().x,
                       static_cast<float>(windowSizeVector.y) / background.getSize().y);
-    window->draw(bgsprite);
     sf::FloatRect spriteBounds = startButtonSprite.getGlobalBounds();
     startButtonSprite.setPosition((xSize - spriteBounds.width) / 2, (ySize) / 2);
     if (startButtonSprite.getGlobalBounds().contains(static_cast<float>(mousePosition.x),
@@ -52,6 +51,7 @@ void drawFirstPage(sf::RenderWindow *window) {
         startButtonSprite.setTexture(startButton);
     }
 
+    window->draw(bgsprite);
     window->draw(startButtonSprite);
     window->draw(titleSprite);
 
