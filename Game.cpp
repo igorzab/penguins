@@ -209,37 +209,36 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins) {
 }
 
 
-void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size, int windowSize) {
+void play(sf::RenderWindow *window) {
     sf::Vector2u windowSizeVector = window->getSize();
     unsigned int xSize = windowSizeVector.x;
     unsigned int ySize = windowSizeVector.y;
 
+    int numPenguins = 0;
+    int numPlayers = 0;
+    int currentFaze = 1;
     while (window->isOpen()) {
-        int currentFaze = 0;
         sf::Event event;
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window->close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-                bool check = false;
-                switch (currentFaze) {
-                    case 0:
-                        check = checkIntersection(event.mouseButton.x, event.mouseButton.y);
-                        break;
-
-                }
-                if(check){
-                    currentFaze++;
-                    cout << "checked\n";
-                }else{
-                    cout << "x: " << event.mouseButton.x << " y: " << event.mouseButton.y << endl;
+                if (currentFaze == 0) {
+                    bool check = checkIntersection(event.mouseButton.x, event.mouseButton.y);
+                    if (check) {
+                        currentFaze++;
+                    }
+                }else if(currentFaze == 1){
+                    cout << "Was at main currentfaze = 1\n";
+                    modifyValues(&numPenguins, &numPlayers, event.mouseButton.x, event.mouseButton.y);
+                    cout << "numPenguins: " << numPenguins << endl;
                 }
             }
         }
         window->clear(sf::Color::White);
 
-        drawFirstPage(window);
+        drawSecondPage(window, &numPenguins, &numPlayers);
         window->display();
     }
 }

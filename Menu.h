@@ -14,7 +14,8 @@
 using namespace std;
 
 void drawFirstPage(sf::RenderWindow *window);
-
+void drawSecondPage(sf::RenderWindow *window, int *numPenguins, int *numPlayers);
+void modifyValues(int* numPenguins, int* numPlayers, int clickX, int clickY);
 bool checkIntersection(int clickX, int clickY);
 
 #endif //PENGUINS2_MENU_H
