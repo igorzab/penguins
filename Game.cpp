@@ -185,9 +185,9 @@ bool checkLegalMove(int x, int y, Penguin *selected, GameBoard *gameBoard) {
 }
 
 bool canMove(Penguin *penguin, GameBoard *gameBoard) {
-    if (penguin->x != gameBoard->size-1 &&!badTileOnWay(penguin->x + 1, penguin->y, gameBoard)) return true;
+    if (penguin->x != gameBoard->size - 1 && !badTileOnWay(penguin->x + 1, penguin->y, gameBoard)) return true;
     if (penguin->x != 0 && !badTileOnWay(penguin->x - 1, penguin->y, gameBoard)) return true;
-    if (penguin->y != gameBoard->size-1 && !badTileOnWay(penguin->x, penguin->y + 1, gameBoard)) return true;
+    if (penguin->y != gameBoard->size - 1 && !badTileOnWay(penguin->x, penguin->y + 1, gameBoard)) return true;
     if (penguin->y != 0 && !badTileOnWay(penguin->x, penguin->y - 1, gameBoard)) return true;
     return false;
 }
@@ -209,6 +209,42 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins) {
 }
 
 
+void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size, int windowSize) {
+    sf::Vector2u windowSizeVector = window->getSize();
+    unsigned int xSize = windowSizeVector.x;
+    unsigned int ySize = windowSizeVector.y;
+
+    while (window->isOpen()) {
+        int currentFaze = 0;
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window->close();
+            }
+            if (event.type == sf::Event::MouseButtonPressed) {
+                bool check = false;
+                switch (currentFaze) {
+                    case 0:
+                        check = checkIntersection(event.mouseButton.x, event.mouseButton.y);
+                        break;
+
+                }
+                if(check){
+                    currentFaze++;
+                    cout << "checked\n";
+                }else{
+                    cout << "x: " << event.mouseButton.x << " y: " << event.mouseButton.y << endl;
+                }
+            }
+        }
+        window->clear(sf::Color::White);
+
+        drawFirstPage(window);
+        window->display();
+    }
+}
+
+/*
 void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
 
     bool gameOver = false;
@@ -324,3 +360,4 @@ void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
         }
     }
 }
+*/

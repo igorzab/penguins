@@ -5,14 +5,7 @@
 #ifndef PENGUINS2_GAME_H
 #define PENGUINS2_GAME_H
 
-#include <iostream>
-#include "SFML/System.hpp"
-#include "SFML/Graphics.hpp"
-#include "SFML/Audio.hpp"
-#include "Penguin.h"
-#include "GameBoard.h"
-#include <chrono>
-#include <thread>
+#include "Menu.h"
 
 
 
@@ -171,6 +164,6 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins);
  * @param numPenguins The number of penguins each player has.
  * @param size The size of the game board.
  */
-void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size);
+void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size, int windowSize);
 
 #endif
