@@ -5,6 +5,45 @@
 #include "Colors.h"
 
 void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) {
+    sf::Sprite sprite;
+    sf::Texture oneFishtexture;
+    sf::Texture twoFishtexture;
+    sf::Texture threeFishtexture;
+    sf::Texture waterTexture;
+    if (!oneFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/1fish.png"))
+        cout << "error loading tile img\n";
+    if (!twoFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/2fish.png"))
+        cout << "error loading tile img\n";
+    if (!threeFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/3fish.png"))
+        cout << "error loading tile img\n";
+    if (!waterTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/water.png"))
+        cout << "error loading tile img\n";
+    sprite.setTexture(waterTexture);
+
+    const int tileSize = 100;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            Tile tile = board->tiles[i][j];
+            sprite.setPosition(tile.x * tileSize, tile.y * tileSize);
+            sprite.setTexture(waterTexture);
+            switch (tile.fishCount) {
+                case 1:
+                    sprite.setTexture(oneFishtexture);
+                    break;
+                case 2:
+                    sprite.setTexture(twoFishtexture);
+                    break;
+                case 3:
+                    sprite.setTexture(threeFishtexture);
+                    break;
+            }
+            window->draw(sprite);
+        }
+    }
+}
+
+/*
+void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) {
     const int tileSize = size > 20 ? 20 : 40; // Adjust this value to set the size of each tile.
 
     const int fishSize = tileSize / 6; // adjust this value to change a fishTile size;
@@ -66,7 +105,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
 
     window->display();
 }
-
+*/
 void drawAPenguin(int x, int y, GameBoard *gameBoard) {
     gameBoard->tiles[x][y].fishCount = -2; // penguin macros
 }
@@ -209,8 +248,26 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins) {
 }
 
 
+void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float animationSpeed, sf::Clock *clock) {
+
+    if (clock->getElapsedTime().asSeconds() > animationSpeed) {
+        if (rectSource->left + rectSource->width >= 7080) {
+            rectSource->left = 0;
+        } else {
+            rectSource->left = rectSource->left + rectSource->width;
+        }
+        animatedSprite->setTextureRect(*rectSource);
+        clock->restart();
+    }
+}
+
 void play(sf::RenderWindow *window) {
     sf::Vector2u windowSizeVector = window->getSize();
+    sf::IntRect rectPengBackground(0, 0, 120, 180);
+    sf::Sprite backgroundPenguin(penguinBackgroundTexture, rectPengBackground);
+    backgroundPenguin.setScale(2.0f, 2.0f);
+    backgroundPenguin.setPosition(0, 0);
+
     unsigned int xSize = windowSizeVector.x;
     unsigned int ySize = windowSizeVector.y;
 
@@ -224,21 +281,36 @@ void play(sf::RenderWindow *window) {
                 window->close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-                if (currentFaze == 0) {
-                    bool check = checkIntersection(event.mouseButton.x, event.mouseButton.y);
-                    if (check) {
-                        currentFaze++;
-                    }
-                }else if(currentFaze == 1){
-                    cout << "Was at main currentfaze = 1\n";
-                    modifyValues(&numPenguins, &numPlayers, event.mouseButton.x, event.mouseButton.y);
-                    cout << "numPenguins: " << numPenguins << endl;
-                }
+                modifyValues(&numPenguins, &numPlayers, &currentFaze, event.mouseButton.x, event.mouseButton.y);
+//                if (currentFaze == 0) {
+//                    bool check = checkIntersection(event.mouseButton.x, event.mouseButton.y);
+//                    if (check) {
+//                        currentFaze++;
+//                    }
+//                }else if(currentFaze == 1){
+//                    cout << "Was at main currentfaze = 1\n";
+//                    modifyValues(&numPenguins, &numPlayers, &currentFaze, event.mouseButton.x, event.mouseButton.y);
+//                    cout << "faze: " << currentFaze << endl;
+//                }
             }
         }
         window->clear(sf::Color::White);
 
-        drawSecondPage(window, &numPenguins, &numPlayers);
+        window->setView(view);
+        if (currentFaze == -2) {
+            window->draw(backgroundSprite);
+        } else if (currentFaze == -1) {
+            drawIntro(window, &introClock, introAnimationSpeed, &positionCounter, &currentFaze);
+        } else if (currentFaze == 0) {
+            drawFirstPage(window);
+        } else if (currentFaze == 1) {
+
+            drawSecondPage(window, &numPenguins, &numPlayers);
+        } else if (currentFaze == 2) {
+
+            drawGameBoard(&gameboard, 20, window);
+        }
+//        window->draw(backgroundPenguin);
         window->display();
     }
 }
