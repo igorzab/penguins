@@ -200,6 +200,6 @@ void modifyValues(int *numPenguins, int *numPlayers, int *currentFaze, int click
         *numPenguins = *numPenguins - 1;
     if (plusButtonPlayer.getGlobalBounds().contains(clickX, clickY)) *numPlayers = *numPlayers + 1;
     if (minusButtonPlayer.getGlobalBounds().contains(clickX, clickY) && *numPlayers > 0) *numPlayers = *numPlayers - 1;
-    if (menu2NextButton.getGlobalBounds().contains(clickX, clickY)) *currentFaze = *currentFaze + 1;
-    if (startButtonSprite.getGlobalBounds().contains(clickX, clickY)) *currentFaze = *currentFaze + 1;
+    if (menu2NextButton.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 1) *currentFaze = *currentFaze + 1;
+    if (startButtonSprite.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 0) *currentFaze = *currentFaze + 1;
 }
