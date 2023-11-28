@@ -262,6 +262,21 @@ void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float an
 }
 
 void play(sf::RenderWindow *window) {
+
+    struct GameBoard gameboard;
+    gameboard.size = 20;
+    gameboard.tiles = (Tile **) malloc(20 * sizeof(Tile *));
+
+    for (int i = 0; i < 20; i++) {
+        gameboard.tiles[i] = (Tile *) malloc(20 * sizeof(Tile));
+    }
+    randomizeField(&gameboard);
+    initializePlayers(&gameboard, 2, 3);
+    initializePenguins(&gameboard, 2, 3);
+
+    sf::Clock clock;
+    sf::Clock introClock;
+    sf::Texture penguinBackgroundTexture;
     sf::Vector2u windowSizeVector = window->getSize();
     sf::IntRect rectPengBackground(0, 0, 120, 180);
     sf::Sprite backgroundPenguin(penguinBackgroundTexture, rectPengBackground);
@@ -271,9 +286,27 @@ void play(sf::RenderWindow *window) {
     unsigned int xSize = windowSizeVector.x;
     unsigned int ySize = windowSizeVector.y;
 
+    if (!penguinBackgroundTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/backgroundPenguin.png"))
+        cout << "ERROR loading penguinBackgroundTexture image.\n";
+
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/4k.jpg")) {
+        cout << "error loading image \n";
+    }
+    sf::Sprite backgroundSprite;
+    backgroundSprite.setTexture(backgroundTexture);
+    sf::Vector2f gameFieldSize(5472, 3648);
+
     int numPenguins = 0;
     int numPlayers = 0;
-    int currentFaze = 1;
+    int currentFaze = 2;
+    int positionCounter = 0;
+    float animationSpeed = 0.03f;
+    float introAnimationSpeed = 0.05f;
+
+    sf::View view(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
+    window->setView(view);
+
     while (window->isOpen()) {
         sf::Event event;
         while (window->pollEvent(event)) {
@@ -294,6 +327,24 @@ void play(sf::RenderWindow *window) {
 //                }
             }
         }
+        // Handle camera movement
+        float cameraSpeed = 3.0f; // Adjust as needed
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            view.move(-cameraSpeed, 0);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            view.move(cameraSpeed, 0);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            view.move(0, -cameraSpeed);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            view.move(0, cameraSpeed);
+        }
+
+
+//        playAnimation(&backgroundPenguin, &rectPengBackground, animationSpeed, &clock);
         window->clear(sf::Color::White);
 
         window->setView(view);
@@ -314,6 +365,7 @@ void play(sf::RenderWindow *window) {
         window->display();
     }
 }
+
 
 /*
 void play(sf::RenderWindow *window, int numPlayers, int numPenguins, int size) {
