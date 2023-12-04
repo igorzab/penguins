@@ -5,6 +5,8 @@
 
 sf::Sprite startButtonSprite;
 
+sf::Sprite snow;
+
 sf::Sprite plusButtonPenguin;
 
 sf::Sprite minusButtonPenguin;
@@ -57,26 +59,34 @@ void generateRandomPair(Pair *pair, int rangeX, int rangeY){
     pair->y = rand()%rangeY;
 }
 
-void drawFirstPage(sf::RenderWindow *window) {
+void drawFirstPage(sf::RenderWindow *window, sf::Clock *snowClock, sf::IntRect *snowRect) {
     sf::Vector2u windowSizeVector = window->getSize();
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
     unsigned int xSize = windowSizeVector.x;
     unsigned int ySize = windowSizeVector.y;
 
+    sf::Texture snowTexture;
     sf::Texture startButton;
     sf::Texture title;
     sf::Texture startButtonWhite;
     sf::Font font;
+
     if (!startButton.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/startButton.png"))
         cout << "ERROR loading button image.\n";
+    if (!snowTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/snow.png"))
+        cout << "ERROR loading snow image.\n";
     if (!title.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/title.png"))
-        cout << "ERROR loading button image.\n";
+        cout << "ERROR loading title image.\n";
     if (!startButtonWhite.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/startButtonWhite.png"))
-        cout << "ERROR loading button image.\n";
+        cout << "ERROR loading startButtonWhite image.\n";
     if (!font.loadFromFile("/Users/igorzab/CLionProjects/epfu/fonts/arial.ttf")) cout << "Error loading font\n";
     drawBackground(window);
 
+    snow.setTexture(snowTexture);
     sf::Sprite titleSprite;
+    float snowAnimationSpeed = 0.1f;
+    snow.setScale(window->getSize().x / static_cast<float>(snowRect->width),
+                    window->getSize().y / static_cast<float>(snowRect->height));
     titleSprite.setTexture(title);
     titleSprite.setPosition((xSize - titleSprite.getGlobalBounds().width) / 2, 250);
     if(snowClock->getElapsedTime().asSeconds() >= snowAnimationSpeed){
@@ -98,12 +108,14 @@ void drawFirstPage(sf::RenderWindow *window) {
 
 
     startButtonSprite.setTexture(startButtonWhite);
+    startButtonSprite.setScale(0.6f,0.6f);
     sf::FloatRect spriteBounds = startButtonSprite.getGlobalBounds();
     startButtonSprite.setPosition((xSize - spriteBounds.width) / 2, (ySize) / 2);
     if (startButtonSprite.getGlobalBounds().contains(static_cast<float>(mousePosition.x),
                                                      static_cast<float>(mousePosition.y))) {
         startButtonSprite.setTexture(startButton);
     }
+
     window->draw(startButtonSprite);
     window->draw(titleSprite);
 
