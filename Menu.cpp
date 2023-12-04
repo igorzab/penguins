@@ -52,6 +52,11 @@ void drawBackground(sf::RenderWindow *window) {
     window->draw(bgsprite);
 }
 
+void generateRandomPair(Pair *pair, int rangeX, int rangeY){
+    pair->x = rand()%rangeX;
+    pair->y = rand()%rangeY;
+}
+
 void drawFirstPage(sf::RenderWindow *window) {
     sf::Vector2u windowSizeVector = window->getSize();
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
@@ -74,6 +79,23 @@ void drawFirstPage(sf::RenderWindow *window) {
     sf::Sprite titleSprite;
     titleSprite.setTexture(title);
     titleSprite.setPosition((xSize - titleSprite.getGlobalBounds().width) / 2, 250);
+    if(snowClock->getElapsedTime().asSeconds() >= snowAnimationSpeed){
+        struct Pair snow[100];
+
+        for(int i = 0; i < 100; i++){
+            generateRandomPair(&snow[i], window->getSize().x, window->getSize().y);
+        }
+        for(int i = 0; i < 100; i++){
+            sf::RectangleShape square;
+            square.setSize(sf::Vector2f(4, 4));
+            square.setPosition(snow[i].x, snow[i].y);
+            square.setRotation(rand() % 90);
+            square.setFillColor(sf::Color::White);
+            window->draw(square);
+        }
+        snowClock->restart();
+    }
+
 
     startButtonSprite.setTexture(startButtonWhite);
     sf::FloatRect spriteBounds = startButtonSprite.getGlobalBounds();

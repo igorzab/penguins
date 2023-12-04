@@ -4,6 +4,8 @@
 #include "Game.h"
 #include "Colors.h"
 
+float tileSize = 100.0f;
+
 void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) {
 
     sf::Color colors[] = {
@@ -48,56 +50,68 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
     sf::Texture waterTexture;
     sf::Texture penguinTexture;
     sf::Texture deadPenguinTexture;
-    if (!oneFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/pen2_100.png"))
-        cout << "error loading tile img\n";
-    if (!twoFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/pen1_100.png"))
-        cout << "error loading tile img\n";
-    if (!threeFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/pen3_100.png"))
-        cout << "error loading tile img\n";
-    if (!waterTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/water.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Black.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Black_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Blue.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Blue_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Cyan.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Cyan_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Green.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Green_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Purple.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Purple_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Magenta.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Magenta_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_White.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_White_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Red.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Red_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Orange.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Orange_100.png"))
-        cout << "error loading tile img\n";
-    if (! Dead_Penguin_Yellow.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Yellow_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Black.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Black_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Blue.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Blue_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Cyan.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Cyan_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Green.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Green_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Purple.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Purple_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Magenta.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Magenta_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_White.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_White_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Red.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Red_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Orange.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Orange_100.png"))
-        cout << "error loading tile img\n";
-    if (! Penguin_Yellow.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Yellow_100.png"))
-        cout << "error loading tile img\n";
+    {
+        if (!oneFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/pen2_100.png"))
+            cout << "error loading tile img\n";
+        if (!twoFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/pen1_100.png"))
+            cout << "error loading tile img\n";
+        if (!threeFishtexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/pen3_100.png"))
+            cout << "error loading tile img\n";
+        if (!waterTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/water.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Black.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Black_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Blue.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Blue_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Cyan.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Cyan_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Green.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Green_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Purple.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Purple_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Magenta.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Magenta_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_White.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_White_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Red.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Red_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Orange.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Orange_100.png"))
+            cout << "error loading tile img\n";
+        if (!Dead_Penguin_Yellow.loadFromFile(
+                "/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Dead_Penguin_Yellow_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Black.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Black_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Blue.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Blue_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Cyan.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Cyan_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Green.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Green_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Purple.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Purple_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Magenta.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Magenta_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_White.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_White_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Red.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Red_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Orange.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Orange_100.png"))
+            cout << "error loading tile img\n";
+        if (!Penguin_Yellow.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/tiles/Penguin_Yellow_100.png"))
+            cout << "error loading tile img\n";
+    }
 
-    sf::Texture deadPenguins[]  = {
+    sf::Texture deadPenguins[] = {
             Dead_Penguin_Black,
             Dead_Penguin_Blue,
             Dead_Penguin_Cyan,
@@ -110,7 +124,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
             Dead_Penguin_Yellow
 
     };
-    sf::Texture Penguins[]  = {
+    sf::Texture Penguins[] = {
             Penguin_Black,
             Penguin_Blue,
             Penguin_Cyan,
@@ -124,7 +138,6 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
 
     };
     sprite.setTexture(waterTexture);
-    const int tileSize = 100;
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
             Tile tile = board->tiles[i][j];
@@ -133,7 +146,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
             switch (tile.fishCount) {
                 case -2:
                     //TODO: draw other model if penguin can't move.
-                    sprite.setTexture(Penguins[tile.owningPlayer-1]);
+                    sprite.setTexture(Penguins[tile.owningPlayer - 1]);
 
                     break;
                 case 1:
@@ -146,6 +159,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
                     sprite.setTexture(threeFishtexture);
                     break;
             }
+            sprite.setScale(tileSize / 100, tileSize / 100);
             window->draw(sprite);
         }
     }
@@ -157,7 +171,6 @@ void drawAPenguin(int x, int y, GameBoard *gameBoard) {
 
 
 Pair getPressedTile(int clickX, int clickY, GameBoard *gameBoard) {
-    const int tileSize = 100;
     int xFound = -1, yFound = -1;
 
     xFound = clickX / tileSize;
@@ -262,6 +275,7 @@ void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float an
 }
 
 void play(sf::RenderWindow *window) {
+    srand(time(NULL));
     sf::SoundBuffer buffer;
     sf::Sound sound;
 
@@ -273,28 +287,14 @@ void play(sf::RenderWindow *window) {
     Penguin *selectedPenguin;
     int currentPlacingPlayer = 0;
     struct GameBoard gameboard;
-    gameboard.size = 20;
-    gameboard.tiles = (Tile **) malloc(20 * sizeof(Tile *));
-
-    for (int i = 0; i < 20; i++) {
-        gameboard.tiles[i] = (Tile *) malloc(20 * sizeof(Tile));
-    }
-    randomizeField(&gameboard);
 
     sf::Clock clock;
     sf::Clock introClock;
     sf::Texture penguinBackgroundTexture;
     sf::Vector2u windowSizeVector = window->getSize();
-    sf::IntRect rectPengBackground(0, 0, 120, 180);
-    sf::Sprite backgroundPenguin(penguinBackgroundTexture, rectPengBackground);
-    backgroundPenguin.setScale(2.0f, 2.0f);
-    backgroundPenguin.setPosition(0, 0);
 
     unsigned int xSize = windowSizeVector.x;
     unsigned int ySize = windowSizeVector.y;
-
-    if (!penguinBackgroundTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/backgroundPenguin.png"))
-        cout << "ERROR loading penguinBackgroundTexture image.\n";
 
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/4k.jpg")) {
@@ -306,11 +306,14 @@ void play(sf::RenderWindow *window) {
 
     int numPenguins = 3;
     int numPlayers = 2;
-    int currentFaze = -1;
+    int currentFaze = 0;
     sound.play();
     int positionCounter = 0;
     float animationSpeed = 0.03f;
     float introAnimationSpeed = 0.05f;
+    sf::Clock snowClock;
+    sf::IntRect snowRect(0, 0, 216, 160);
+
 
     sf::View view(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
     window->setView(view);
@@ -324,9 +327,17 @@ void play(sf::RenderWindow *window) {
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (currentFaze <= 1) {
                     modifyValues(&numPenguins, &numPlayers, &currentFaze, event.mouseButton.x, event.mouseButton.y);
-                    if(currentFaze == 2){
+                    if (currentFaze == 2) {
                         initializePlayers(&gameboard, numPlayers, numPenguins);
                         initializePenguins(&gameboard, numPlayers, numPenguins);
+                        gameboard.size = (numPenguins * numPlayers + 20)/1.5;
+                        if(gameboard.size < 20) gameboard.size = 20;
+                        gameboard.tiles = (Tile **) malloc(gameboard.size * sizeof(Tile *));
+
+                        for (int i = 0; i < gameboard.size; i++) {
+                            gameboard.tiles[i] = (Tile *) malloc(gameboard.size * sizeof(Tile));
+                        }
+                        randomizeField(&gameboard);
                     }
                 } else {
 
@@ -342,7 +353,7 @@ void play(sf::RenderWindow *window) {
                         cout << numPenguins << endl;
                         while (counter < numPenguins) {
                             cout << currentPlayer.penguins[counter].x << endl;
-                            if ((currentPlayer.penguins[counter].x > 20 * 100 + 20 ||
+                            if ((currentPlayer.penguins[counter].x > gameboard.size * 100 + gameboard.size ||
                                  currentPlayer.penguins[counter].x == 0) &&
                                 !badTileOnWay(pressedTile.x, pressedTile.y, &gameboard) &&
                                 gameboard.tiles[pressedTile.x][pressedTile.y].fishCount == 1) {
@@ -423,8 +434,9 @@ void play(sf::RenderWindow *window) {
             }
         }
         // Handle camera movement
-        float cameraSpeed = 3.0f; // Adjust as needed
-
+        float cameraSpeed = 10.0f; // Adjust as needed
+        sf::FloatRect viewBounds(0, 0, gameboard.size * tileSize, gameboard.size *
+                                                                  tileSize); // Adjust mapWidth and mapHeight according to your game world
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             view.move(-cameraSpeed, 0);
 
@@ -437,9 +449,27 @@ void play(sf::RenderWindow *window) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             view.move(0, cameraSpeed);
         }
+        sf::Vector2f viewCenter = view.getCenter();
+        sf::Vector2f viewSize = view.getSize();
 
+        float halfWidth = viewSize.x / 2.0f;
+        float halfHeight = viewSize.y / 2.0f;
 
-//        playAnimation(&backgroundPenguin, &rectPengBackground, animationSpeed, &clock);
+        if (viewCenter.x - halfWidth < viewBounds.left) {
+            view.setCenter(halfWidth, viewCenter.y);
+        }
+
+        if (viewCenter.x + halfWidth > viewBounds.left + viewBounds.width) {
+            view.setCenter(viewBounds.left + viewBounds.width - halfWidth, viewCenter.y);
+        }
+
+        if (viewCenter.y - halfHeight < viewBounds.top) {
+            view.setCenter(viewCenter.x, halfHeight);
+        }
+
+        if (viewCenter.y + halfHeight > viewBounds.top + viewBounds.height) {
+            view.setCenter(viewCenter.x, viewBounds.top + viewBounds.height - halfHeight);
+        }
         window->clear(sf::Color::White);
 
         window->setView(view);
@@ -448,13 +478,12 @@ void play(sf::RenderWindow *window) {
         } else if (currentFaze == -1) {
             drawIntro(window, &introClock, introAnimationSpeed, &positionCounter, &currentFaze);
         } else if (currentFaze == 0) {
-            drawFirstPage(window);
+            drawFirstPage(window, &snowClock, &snowRect);
         } else if (currentFaze == 1) {
             drawSecondPage(window, &numPenguins, &numPlayers);
         } else if (currentFaze == 2) {
-            drawGameBoard(&gameboard, 20, window);
+            drawGameBoard(&gameboard, gameboard.size, window);
         }
-//        window->draw(backgroundPenguin);
         window->display();
     }
 }
