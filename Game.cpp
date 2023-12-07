@@ -273,14 +273,62 @@ void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float an
         clock->restart();
     }
 }
+int counter = 0;
+void sendData(GameBoard *gameBoard, int numPlayers, int numPenguins) {
+//
+//    sf::TcpSocket socket;
+//    if (socket.connect("141.147.31.0", 3000) != sf::Socket::Done) {
+//        std::cerr << "Error connecting to the server" << std::endl;
+//    }
+//    nlohmann::json jsonGameBoard;
+//
+//    sf::Packet packet;
+//    for (int i = 0; i < gameBoard->size; i++) {
+//        nlohmann::json jsonRow;
+//        for (int j = 0; j < gameBoard->size; j++) {
+//            nlohmann::json jsonTile;
+//            jsonTile["fishCount"] = gameBoard->tiles[i][j].fishCount;
+//            jsonTile["x"] = gameBoard->tiles[i][j].x;
+//            jsonTile["y"] = gameBoard->tiles[i][j].y;
+//            jsonTile["owningPlayer"] = gameBoard->tiles[i][j].owningPlayer;
+//            jsonRow.push_back(jsonTile);
+//        }
+//        jsonGameBoard["tiles"].push_back(jsonRow);
+//        jsonRow = "";
+//    }
+//
+//    // Convert the json object to a string
+//    std::string jsonString = jsonGameBoard.dump();
+//
+//    // Print the JSON string
+//    std::cout << jsonString << std::endl;
+//    std::cout << std::endl;
+//    packet << jsonString;
+//    if (socket.send(packet) != sf::Socket::Done) {
+//        std::cerr << "Error sending game board data to the server" << std::endl;
+//    } else {
+//
+//        std::cout << "sent successfully: " << counter << endl;
+//        counter++;
+//    }
+//    jsonString = "";
+//    jsonGameBoard = "";
+//    socket.disconnect();
+}
 
 void play(sf::RenderWindow *window) {
     srand(time(NULL));
     sf::SoundBuffer buffer;
-    sf::Sound sound;
+    sf::Sound intro;
 
-    if (!buffer.loadFromFile("/Users/igorzab/CLionProjects/epfu/audio/move.wav")) std::cout << "error";
-    sound.setBuffer(buffer);
+    sf::Music background;
+    if (!background.openFromFile("/Users/igorzab/CLionProjects/epfu/audio/background.wav")) {
+        std::cerr << "Error loading audio file" << std::endl;
+    }
+    background.setLoop(true);
+
+    if (!buffer.loadFromFile("/Users/igorzab/CLionProjects/epfu/audio/intro.wav")) std::cout << "error";
+    intro.setBuffer(buffer);
     bool gameOver = false;
     bool penguinsPlaced = false;
     bool penguinSelected = false;
@@ -306,8 +354,10 @@ void play(sf::RenderWindow *window) {
 
     int numPenguins = 3;
     int numPlayers = 2;
-    int currentFaze = 0;
-    sound.play();
+    int currentPhase = 0;
+//    intro.play();
+
+//    background.play();
     int positionCounter = 0;
     float animationSpeed = 0.03f;
     float introAnimationSpeed = 0.05f;
@@ -325,19 +375,21 @@ void play(sf::RenderWindow *window) {
                 window->close();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-                if (currentFaze <= 1) {
-                    modifyValues(&numPenguins, &numPlayers, &currentFaze, event.mouseButton.x, event.mouseButton.y);
-                    if (currentFaze == 2) {
+                if (currentPhase <= SETTINGS) {
+                    modifyValues(&numPenguins, &numPlayers, &currentPhase, event.mouseButton.x, event.mouseButton.y,
+                                 &isServer, &isClient);
+                    if (currentPhase == GAME) {
                         initializePlayers(&gameboard, numPlayers, numPenguins);
                         initializePenguins(&gameboard, numPlayers, numPenguins);
-                        gameboard.size = (numPenguins * numPlayers + 20)/1.5;
-                        if(gameboard.size < 20) gameboard.size = 20;
+                        gameboard.size = (numPenguins * numPlayers + 20) / 1.5;
+                        if (gameboard.size < 20) gameboard.size = 20;
                         gameboard.tiles = (Tile **) malloc(gameboard.size * sizeof(Tile *));
 
                         for (int i = 0; i < gameboard.size; i++) {
                             gameboard.tiles[i] = (Tile *) malloc(gameboard.size * sizeof(Tile));
                         }
                         randomizeField(&gameboard);
+                        sendData(&gameboard, numPlayers, numPenguins);
                     }
                 } else {
 
@@ -347,35 +399,7 @@ void play(sf::RenderWindow *window) {
                     sf::Vector2f worldMousePosition = window->mapPixelToCoords(mousePosition, view);
                     Pair pressedTile = getPressedTile(worldMousePosition.x, worldMousePosition.y, &gameboard);
                     if (!penguinsPlaced) {
-                        cout << "pressedX: " << pressedTile.x << " PressedY: " << pressedTile.y << endl;
-                        Player currentPlayer = gameboard.players[currentPlacingPlayer];
-                        int counter = 0;
-                        cout << numPenguins << endl;
-                        while (counter < numPenguins) {
-                            cout << currentPlayer.penguins[counter].x << endl;
-                            if ((currentPlayer.penguins[counter].x > gameboard.size * 100 + gameboard.size ||
-                                 currentPlayer.penguins[counter].x == 0) &&
-                                !badTileOnWay(pressedTile.x, pressedTile.y, &gameboard) &&
-                                gameboard.tiles[pressedTile.x][pressedTile.y].fishCount == 1) {
-
-                                cout << "placing";
-                                currentPlayer.penguins[counter].x = pressedTile.x;
-                                currentPlayer.penguins[counter].y = pressedTile.y;
-                                gameboard.players[currentPlacingPlayer].score += gameboard.tiles[pressedTile.x][pressedTile.y].fishCount;
-                                drawAPenguin(pressedTile.x, pressedTile.y, &gameboard);
-                                gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer = currentPlacingPlayer + 1;
-                                if (currentPlacingPlayer == numPlayers - 1 && counter == numPenguins - 1) {
-                                    penguinsPlaced = true;
-                                    currentPlacingPlayer = 0;
-                                } else {
-                                    std::cout << "Player #" << currentPlacingPlayer + 1 << ", plz place ur penguin.\n";
-                                    currentPlacingPlayer++;
-                                }
-                                if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
-                                break;
-                            }
-                            counter++;
-                        }
+                        placementPhase(pressedTile, &gameboard, &currentPlacingPlayer, numPenguins, numPlayers, &penguinsPlaced);
 
                     } else if (!gameOver) {
                         Player currentPlayer = gameboard.players[currentPlacingPlayer];
@@ -449,6 +473,9 @@ void play(sf::RenderWindow *window) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             view.move(0, cameraSpeed);
         }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+//            sendData(&gameboard, numPlayers, numPenguins);
+        }
         sf::Vector2f viewCenter = view.getCenter();
         sf::Vector2f viewSize = view.getSize();
 
@@ -473,16 +500,18 @@ void play(sf::RenderWindow *window) {
         window->clear(sf::Color::White);
 
         window->setView(view);
-        if (currentFaze == -2) {
+        if (currentPhase == -2) {
             window->draw(backgroundSprite);
-        } else if (currentFaze == -1) {
-            drawIntro(window, &introClock, introAnimationSpeed, &positionCounter, &currentFaze);
-        } else if (currentFaze == 0) {
+        } else if (currentPhase == INTRO_PHASE) {
+            drawIntro(window, &introClock, introAnimationSpeed, &positionCounter, &currentPhase);
+        } else if (currentPhase == HOME_SCREEN) {
             drawFirstPage(window, &snowClock, &snowRect);
-        } else if (currentFaze == 1) {
-            drawSecondPage(window, &numPenguins, &numPlayers);
-        } else if (currentFaze == 2) {
-            drawGameBoard(&gameboard, gameboard.size, window);
+        } else if (currentPhase == MODE_SELECT) {
+            drawSecondPage(window);
+        } else if (currentPhase == SETTINGS) {
+            drawThirdPage(window, &numPenguins, &numPlayers);
+        } else if (currentPhase == GAME) {
+            drawGameBoard(&gameboard, numPlayers, numPenguins, gameboard.size, window);
         }
         window->display();
     }
