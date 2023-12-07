@@ -5,6 +5,14 @@
 #ifndef PENGUINS2_GAME_H
 #define PENGUINS2_GAME_H
 
+#define SELECTED_PENGUIN 
+#define PENGUIN_STATE -2
+#define WATER -1
+#define ONE_FISH 1
+#define TWO_FISH 2
+#define THREE_FISH 3
+
+
 #include "Menu.h"
 
 
@@ -45,7 +53,7 @@ void drawPenguinTile(struct GameBoard *board, int size, sf::Color tileBackground
  * @param size The size of the game board.
  * @param window A pointer to the SFML RenderWindow used for drawing.
  */
-void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window);
+void drawGameBoard(struct GameBoard *board, int numPlayers, int numPenguins, int size, sf::RenderWindow *window);
 
 /**
  * @brief Places a penguin on the game board at the specified position.
@@ -169,5 +177,7 @@ void sendData(GameBoard *gameBoard, int numPlayers, int numPenguins);
  * @param size The size of the game board.
  */
 void play(sf::RenderWindow *window);
+
+void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced);
 
 #endif

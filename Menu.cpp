@@ -19,24 +19,28 @@ sf::Sprite menu2NextButton;
 
 sf::Sprite introLogo;
 
-void animateLogo(sf::Sprite *animatedSprite ,int *positionCounter, float animationSpeed, sf::Clock *clock, int yCoordinate, int *currentFaze, int xSize){
+sf::Sprite localPlayer;
+
+sf::Sprite multiPlayer;
+
+void animateLogo(sf::Sprite *animatedSprite ,int *positionCounter, float animationSpeed, sf::Clock *clock, int yCoordinate, int *currentPhase, int xSize){
 
     if (clock->getElapsedTime().asSeconds() > animationSpeed) {
         animatedSprite->setPosition(*positionCounter * 5, yCoordinate);
         *positionCounter = *positionCounter + 5;
-        if(*positionCounter >= xSize/5) *currentFaze = *currentFaze + 1;
+        if(*positionCounter >= xSize/5) *currentPhase = *currentPhase + 1;
         clock->restart();
     }
 }
 
-void drawIntro(sf::RenderWindow *window, sf::Clock *clock, float animationSpeed, int *positionCounter, int *currentFaze) {
+void drawIntro(sf::RenderWindow *window, sf::Clock *clock, float animationSpeed, int *positionCounter, int *currentPhase) {
     sf::Vector2u windowSizeVector = window->getSize();
     sf::Texture introLogoTexture;
     if (!introLogoTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/logo.png"))
         cout << "ERROR loading introLogo image.\n";
     window->clear(sf::Color::Black);
     introLogo.setTexture(introLogoTexture);
-    animateLogo(&introLogo, positionCounter, animationSpeed, clock, windowSizeVector.y/2, currentFaze, windowSizeVector.x);
+    animateLogo(&introLogo, positionCounter, animationSpeed, clock, windowSizeVector.y/2, currentPhase, windowSizeVector.x);
     window->draw(introLogo);
 }
 
@@ -119,10 +123,52 @@ void drawFirstPage(sf::RenderWindow *window, sf::Clock *snowClock, sf::IntRect *
     window->draw(startButtonSprite);
     window->draw(titleSprite);
 
-
 }
 
-void drawSecondPage(sf::RenderWindow *window, int *numPenguins, int *numPlayers) {
+void drawSecondPage(sf::RenderWindow *window){
+    sf::Vector2u windowSizeVector = window->getSize();
+    unsigned int xSize = windowSizeVector.x;
+    unsigned int ySize = windowSizeVector.y;
+
+    sf::Texture clientTextureButton;
+    sf::Texture serverTextureButton;
+
+    if (!clientTextureButton.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/inputField.png"))
+        cout << "ERROR loading inputField image.\n";
+    if (!serverTextureButton.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/inputField.png"))
+        cout << "ERROR loading inputField image.\n";
+
+    multiPlayer.setTexture(serverTextureButton);
+    localPlayer.setTexture(clientTextureButton);
+
+    sf::Font font;
+
+    if (!font.loadFromFile("/Users/igorzab/CLionProjects/epfu/fonts/arial.ttf")) cout << "ERROR loading font.\n";
+
+    drawBackground(window);
+
+    multiPlayer.setPosition((xSize - multiPlayer.getGlobalBounds().width) / 2 - 120, ySize / 2 - 200);
+    sf::Text textServer("Play as Server", font, 30);
+    textServer.setPosition(multiPlayer.getPosition().x + 50,
+                            multiPlayer.getPosition().y + multiPlayer.getGlobalBounds().height / 2 - 20);
+    textServer.setFillColor(sf::Color::Black);
+
+    localPlayer.setPosition(multiPlayer.getGlobalBounds().width + multiPlayer.getPosition().x + 20,
+                                    multiPlayer.getPosition().y);
+
+    sf::Text textClient("Play As Client", font, 30);
+    textClient.setPosition(
+            localPlayer.getPosition().x + localPlayer.getGlobalBounds().width / 2 + 15,
+            localPlayer.getPosition().y + localPlayer.getGlobalBounds().height / 2 - 35);
+    textClient.setFillColor(sf::Color::Black);
+
+    window->draw(multiPlayer);
+    window->draw(localPlayer);
+    window->draw(textServer);
+    window->draw(textClient);
+}
+
+void drawThirdPage(sf::RenderWindow *window, int *numPenguins, int *numPlayers) {
     sf::Vector2u windowSizeVector = window->getSize();
     sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
     unsigned int xSize = windowSizeVector.x;
@@ -228,11 +274,25 @@ bool checkIntersection(int clickX, int clickY) {
     return false;
 }
 
-void modifyValues(int *numPenguins, int *numPlayers, int *currentFaze, int clickX, int clickY) {
+void modifyValues(int *numPenguins, int *numPlayers, int *currentPhase, int clickX, int clickY, bool *isServer, bool *isClient) {
     if (plusButtonPenguin.getGlobalBounds().contains(clickX, clickY)) *numPenguins = *numPenguins + 1;
     if (minusButtonPenguin.getGlobalBounds().contains(clickX, clickY) && *numPenguins > 0) *numPenguins = *numPenguins - 1;
     if (plusButtonPlayer.getGlobalBounds().contains(clickX, clickY)) *numPlayers = *numPlayers + 1;
     if (minusButtonPlayer.getGlobalBounds().contains(clickX, clickY) && *numPlayers > 0) *numPlayers = *numPlayers - 1;
-    if (menu2NextButton.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 1) *currentFaze = *currentFaze + 1;
-    if (startButtonSprite.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 0) *currentFaze = *currentFaze + 1;
+    if (menu2NextButton.getGlobalBounds().contains(clickX, clickY) && *currentPhase == SETTINGS) {
+        *currentPhase =*currentPhase +1;
+        cout << "settingsPhase: " << *currentPhase;
+    }
+    if (startButtonSprite.getGlobalBounds().contains(clickX, clickY) && *currentPhase == HOME_SCREEN) *currentPhase = *currentPhase + 1;
+    if (localPlayer.getGlobalBounds().contains(clickX, clickY) && *currentPhase == MODE_SELECT) {
+        *currentPhase = *currentPhase + 1;
+        cout << "phase: " << *currentPhase << endl;
+    }
+    if (multiPlayer.getGlobalBounds().contains(clickX, clickY) && *currentPhase == MODE_SELECT) {
+        *currentPhase = *currentPhase + 1;
+        cout << "phase: " << *currentPhase << endl;
+    }
 }
+
+
+

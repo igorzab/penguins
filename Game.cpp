@@ -6,20 +6,8 @@
 
 float tileSize = 100.0f;
 
-void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) {
+void drawGameBoard(struct GameBoard *board, int numPlayers, int numPenguins, int size, sf::RenderWindow *window) {
 
-    sf::Color colors[] = {
-            sf::Color::Red,
-            sf::Color::Green,
-            sf::Color::Blue,
-            sf::Color::Yellow,
-            sf::Color::Magenta,
-            sf::Color::Cyan,
-            sf::Color(255, 165, 0), // Orange
-            sf::Color(128, 0, 128), // Purple
-            sf::Color::White,
-            sf::Color::Black
-    };
     sf::Texture Dead_Penguin_Black;
     sf::Texture Dead_Penguin_Blue;
     sf::Texture Dead_Penguin_Cyan;
@@ -145,9 +133,17 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
             sprite.setTexture(waterTexture);
             switch (tile.fishCount) {
                 case -2:
-                    //TODO: draw other model if penguin can't move.
-                    sprite.setTexture(Penguins[tile.owningPlayer - 1]);
-
+                    Penguin penguin;
+                    for(int k = 0; k < numPlayers; k++){
+                        for(int l = 0; l < numPenguins; l++){
+                            if(board->players[k].penguins[l].x == i && board->players[k].penguins[l].y == j) penguin = board->players[k].penguins[l];
+                        }
+                    }
+                    if(canMove(&penguin, board)){
+                        sprite.setTexture(Penguins[tile.owningPlayer-1]);
+                    }else{
+                        sprite.setTexture(deadPenguins[tile.owningPlayer-1]);
+                    }
                     break;
                 case 1:
                     sprite.setTexture(oneFishtexture);
@@ -166,7 +162,7 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window) 
 }
 
 void drawAPenguin(int x, int y, GameBoard *gameBoard) {
-    gameBoard->tiles[x][y].fishCount = -2; // penguin macros
+    gameBoard->tiles[x][y].fishCount = PENGUIN_STATE; // penguin macros
 }
 
 
@@ -211,8 +207,8 @@ void initializePenguins(GameBoard *gameBoard, int numPlayers, int numPenguins) {
 
 bool badTileOnWay(int x, int y, GameBoard *gameBoard) {
     if (x < 0 || y < 0) return true;
-    if (gameBoard->tiles[x][y].fishCount == -1) return true;
-    if (gameBoard->tiles[x][y].fishCount == -2) return true;
+    if (gameBoard->tiles[x][y].fishCount == WATER) return true;
+    if (gameBoard->tiles[x][y].fishCount == PENGUIN_STATE) return true;
     return false;
 }
 
@@ -330,6 +326,8 @@ void play(sf::RenderWindow *window) {
     if (!buffer.loadFromFile("/Users/igorzab/CLionProjects/epfu/audio/intro.wav")) std::cout << "error";
     intro.setBuffer(buffer);
     bool gameOver = false;
+    bool isServer = false;
+    bool isClient = false;
     bool penguinsPlaced = false;
     bool penguinSelected = false;
     Penguin *selectedPenguin;
@@ -341,18 +339,14 @@ void play(sf::RenderWindow *window) {
     sf::Texture penguinBackgroundTexture;
     sf::Vector2u windowSizeVector = window->getSize();
 
-    unsigned int xSize = windowSizeVector.x;
-    unsigned int ySize = windowSizeVector.y;
-
     sf::Texture backgroundTexture;
     if (!backgroundTexture.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/4k.jpg")) {
         cout << "error loading image \n";
     }
     sf::Sprite backgroundSprite;
     backgroundSprite.setTexture(backgroundTexture);
-    sf::Vector2f gameFieldSize(5472, 3648);
 
-    int numPenguins = 3;
+    int numPenguins = 1;
     int numPlayers = 2;
     int currentPhase = 0;
 //    intro.play();
@@ -411,7 +405,7 @@ void play(sf::RenderWindow *window) {
                                         currentPlayer.penguins[i].y == pressedTile.y &&
                                         canMove(&currentPlayer.penguins[i], &gameboard)) {
                                         selectedPenguin = &currentPlayer.penguins[i];
-                                        gameboard.tiles[pressedTile.x][pressedTile.y].fishCount = -3;
+                                        gameboard.tiles[pressedTile.x][pressedTile.y].fishCount = SELECTED_PENGUIN;
                                         penguinSelected = true;
                                         break;
                                     }
@@ -419,7 +413,7 @@ void play(sf::RenderWindow *window) {
                             } else {
                                 if (checkLegalMove(pressedTile.x, pressedTile.y, selectedPenguin, &gameboard)) {
 
-                                    gameboard.tiles[selectedPenguin->x][selectedPenguin->y].fishCount = -1;
+                                    gameboard.tiles[selectedPenguin->x][selectedPenguin->y].fishCount = WATER;
 
                                     selectedPenguin->x = pressedTile.x;
                                     selectedPenguin->y = pressedTile.y;
@@ -514,5 +508,34 @@ void play(sf::RenderWindow *window) {
             drawGameBoard(&gameboard, numPlayers, numPenguins, gameboard.size, window);
         }
         window->display();
+    }
+}
+
+void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced){
+    Player currentPlayer = gameboard->players[*currentPlacingPlayer];
+    int counter = 0;
+    cout << numPenguins << endl;
+    while (counter < numPenguins) {
+        cout << currentPlayer.penguins[counter].x << endl;
+        if ((currentPlayer.penguins[counter].x > gameboard->size * 100 + gameboard->size ||
+             currentPlayer.penguins[counter].x == 0) &&
+            !badTileOnWay(pressedTile.x, pressedTile.y, gameboard) &&
+            gameboard->tiles[pressedTile.x][pressedTile.y].fishCount == ONE_FISH) {
+
+            currentPlayer.penguins[counter].x = pressedTile.x;
+            currentPlayer.penguins[counter].y = pressedTile.y;
+            gameboard->players[*currentPlacingPlayer].score += gameboard->tiles[pressedTile.x][pressedTile.y].fishCount;
+            drawAPenguin(pressedTile.x, pressedTile.y, gameboard);
+            gameboard->tiles[pressedTile.x][pressedTile.y].owningPlayer = *currentPlacingPlayer + 1;
+            if (*currentPlacingPlayer == numPlayers - 1 && counter == numPenguins - 1) {
+                *penguinsPlaced = true;
+                *currentPlacingPlayer = 0;
+            } else {
+                *currentPlacingPlayer = *currentPlacingPlayer + 1;
+            }
+            if (*currentPlacingPlayer >= numPlayers) *currentPlacingPlayer = 0;
+            break;
+        }
+        counter++;
     }
 }

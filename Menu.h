@@ -22,13 +22,14 @@
 #define GAME  3
 
 using namespace std;
-void animateLogo(sf::Sprite *animatedSprite ,int *positionCounter, float animationSpeed, sf::Clock *clock, int yCoordinate, int *currentFaze, int xSize);
-void drawIntro(sf::RenderWindow *window, sf::Clock *clock, float animationSpeed, int *positionCounter, int *currentFaze);
+void animateLogo(sf::Sprite *animatedSprite ,int *positionCounter, float animationSpeed, sf::Clock *clock, int yCoordinate, int *currentPhase, int xSize);
+void drawIntro(sf::RenderWindow *window, sf::Clock *clock, float animationSpeed, int *positionCounter, int *currentPhase);
 void drawFirstPage(sf::RenderWindow *window, sf::Clock *snowClock, sf::IntRect *snowRect);
 void generateRandomPair(Pair *pair, int rangeX, int rangeY);
 void drawBackground(sf::RenderWindow *window);
-void drawSecondPage(sf::RenderWindow *window, int *numPenguins, int *numPlayers);
-void modifyValues(int* numPenguins, int* numPlayers, int *currentFaze, int clickX, int clickY);
+void drawSecondPage(sf::RenderWindow *window);
+void drawThirdPage(sf::RenderWindow *window, int *numPenguins, int *numPlayers);
+void modifyValues(int* numPenguins, int* numPlayers, int *currentPhase, int clickX, int clickY, bool *isServer, bool *isClient);
 bool checkIntersection(int clickX, int clickY);
 
 #endif //PENGUINS2_MENU_H
