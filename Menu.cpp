@@ -158,7 +158,7 @@ void drawSecondPage(sf::RenderWindow *window){
 
     sf::Text textClient("Play As Client", font, 30);
     textClient.setPosition(
-            localPlayer.getPosition().x + localPlayer.getGlobalBounds().width / 2 + 15,
+            localPlayer.getPosition().x + localPlayer.getGlobalBounds().width / 2 - 55,
             localPlayer.getPosition().y + localPlayer.getGlobalBounds().height / 2 - 35);
     textClient.setFillColor(sf::Color::Black);
 
@@ -285,12 +285,11 @@ void modifyValues(int *numPenguins, int *numPlayers, int *currentPhase, int clic
     }
     if (startButtonSprite.getGlobalBounds().contains(clickX, clickY) && *currentPhase == HOME_SCREEN) *currentPhase = *currentPhase + 1;
     if (localPlayer.getGlobalBounds().contains(clickX, clickY) && *currentPhase == MODE_SELECT) {
+        *isServer = true;
         *currentPhase = *currentPhase + 1;
-        cout << "phase: " << *currentPhase << endl;
     }
     if (multiPlayer.getGlobalBounds().contains(clickX, clickY) && *currentPhase == MODE_SELECT) {
         *currentPhase = *currentPhase + 1;
-        cout << "phase: " << *currentPhase << endl;
     }
 }
 

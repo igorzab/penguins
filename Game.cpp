@@ -603,4 +603,18 @@ void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingP
         }
         counter++;
     }
+}   
+
+void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase){
+    initializePlayers(gameboard, numPlayers, numPenguins);
+    initializePenguins(gameboard, numPlayers, numPenguins);
+    gameboard->size = (numPenguins * numPlayers + 20) / 1.5;
+    if (gameboard->size < 20) gameboard->size = 20;
+    gameboard->tiles = (Tile **) malloc(gameboard->size * sizeof(Tile *));
+
+    for (int i = 0; i < gameboard->size; i++) {
+        gameboard->tiles[i] = (Tile *) malloc(gameboard->size * sizeof(Tile));
+    }
+    randomizeField(gameboard);
+    sendData(gameboard, numPlayers, numPenguins, socket, currentPlayer, currentPhase);
 }

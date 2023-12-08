@@ -5,6 +5,9 @@
 #ifndef PENGUINS2_GAME_H
 #define PENGUINS2_GAME_H
 
+
+
+
 #include "Menu.h"
 
 
@@ -170,6 +173,14 @@ void movementPhase(GameBoard *gameboard, int *currentPlacingPlayer, int numPengu
  * @param numPenguins The number of penguins each player has.
  * @param size The size of the game board.
  */
-void play(sf::RenderWindow *window);
+void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *listener);
+
+void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase);
+
+void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced);
+
+void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase);
+
+void movementPhase(GameBoard *gameboard, Pair pressedTile, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinSelected, bool *gameOver, Penguin *selectedPenguin);
 
 #endif
