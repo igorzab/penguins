@@ -11,8 +11,13 @@
 #include "iostream"
 #include "Player.h"
 #include "Tile.h"
-#include "Game.h"
-
+//#include "Game.h"
+#define SELECTED_PENGUIN (-3)
+#define PENGUIN_STATE (-2)
+#define WATER (-1)
+#define ONE_FISH (1)
+#define TWO_FISH 2
+#define THREE_FISH 3
 
 /**
  * @struct GameBoard

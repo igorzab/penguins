@@ -5,14 +5,6 @@
 #ifndef PENGUINS2_GAME_H
 #define PENGUINS2_GAME_H
 
-#define SELECTED_PENGUIN 
-#define PENGUIN_STATE -2
-#define WATER -1
-#define ONE_FISH 1
-#define TWO_FISH 2
-#define THREE_FISH 3
-
-
 #include "Menu.h"
 
 
@@ -163,7 +155,9 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins);
 
 void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float animationSpeed, sf::Clock *clock);
 
-void sendData(GameBoard *gameBoard, int numPlayers, int numPenguins);
+void sendData(GameBoard *gameBoard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase);
+
+void movementPhase(GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, Pair pressedTile, bool *penguinSelected, Penguin *selectedPenguin, bool *gameOver);
 
 /**
  * @brief Main function to play the game.
@@ -177,7 +171,5 @@ void sendData(GameBoard *gameBoard, int numPlayers, int numPenguins);
  * @param size The size of the game board.
  */
 void play(sf::RenderWindow *window);
-
-void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced);
 
 #endif

@@ -15,7 +15,7 @@
 #ifndef PENGUINS2_MENU_H
 #define PENGUINS2_MENU_H
 
-#define INTRO_PHASE  -1
+#define INTRO_PHASE  (-1)
 #define HOME_SCREEN  0
 #define MODE_SELECT 1
 #define SETTINGS  2
