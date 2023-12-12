@@ -366,6 +366,7 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
 //                *currentPhase = json.at("currentPhase");
 //                *currentPlayer = json.at("currentPlayer");
                 updateGameboard(gameBoard, json);
+                recievedData = "";
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -445,12 +446,12 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *list
                     sf::Vector2f worldMousePosition = window->mapPixelToCoords(mousePosition, view);
                     Pair pressedTile = getPressedTile(worldMousePosition.x, worldMousePosition.y, &gameboard);
                     if (!penguinsPlaced) {
-                        if(currentPlacingPlayer == myId){
+//                        if(currentPlacingPlayer == myId){
                             placementPhase(pressedTile, &gameboard, &currentPlacingPlayer, numPenguins, numPlayers, &penguinsPlaced);
                             sendData(&gameboard, numPlayers, numPlayers, socket, currentPlacingPlayer, currentPhase);
-                        }
+//                        }
 
-                    } else if (!gameOver && currentPlacingPlayer == myId) {
+                    } else if (!gameOver ) {
                         Player currentPlayer = gameboard.players[currentPlacingPlayer];
                         if (movesExist(&currentPlayer, &gameboard, numPenguins)) {
 
@@ -479,8 +480,10 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *list
                                     gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer =
                                             currentPlacingPlayer + 1;
                                     currentPlacingPlayer++;
+
                                     if (currentPlacingPlayer >= numPlayers) currentPlacingPlayer = 0;
                                     std::cout << "Player #" << currentPlacingPlayer + 1 << ", plz select a penguin.\n";
+                                    sendData(&gameboard, numPlayers, numPlayers, socket, currentPlacingPlayer, currentPhase);
 
                                     penguinSelected = false;
                                 }
@@ -603,7 +606,7 @@ void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingP
         }
         counter++;
     }
-}   
+}
 
 void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase){
     initializePlayers(gameboard, numPlayers, numPenguins);
