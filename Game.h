@@ -4,7 +4,8 @@
 #pragma once
 #ifndef PENGUINS2_GAME_H
 #define PENGUINS2_GAME_H
-
+#define INIT_REQUEST "INIT_REQUEST"
+#define GET_BOARD "GET_BOARD"
 
 
 
@@ -175,11 +176,11 @@ void movementPhase(GameBoard *gameboard, int *currentPlacingPlayer, int numPengu
  */
 void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *listener);
 
-void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase);
+void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase, int myId);
 
 void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced);
 
-void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase);
+void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase, int *myId);
 
 void movementPhase(GameBoard *gameboard, Pair pressedTile, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinSelected, bool *gameOver, Penguin *selectedPenguin);
 
