@@ -4,10 +4,6 @@
 #pragma once
 #ifndef PENGUINS2_GAME_H
 #define PENGUINS2_GAME_H
-#define INIT_REQUEST "INIT_REQUEST"
-#define GET_BOARD "GET_BOARD"
-
-
 
 #include "Menu.h"
 
@@ -49,7 +45,7 @@ void drawPenguinTile(struct GameBoard *board, int size, sf::Color tileBackground
  * @param size The size of the game board.
  * @param window A pointer to the SFML RenderWindow used for drawing.
  */
-void drawGameBoard(struct GameBoard *board, int numPlayers, int numPenguins, int size, sf::RenderWindow *window);
+void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window);
 
 /**
  * @brief Places a penguin on the game board at the specified position.
@@ -159,10 +155,6 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins);
 
 void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float animationSpeed, sf::Clock *clock);
 
-void sendData(GameBoard *gameBoard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase);
-
-void movementPhase(GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, Pair pressedTile, bool *penguinSelected, Penguin *selectedPenguin, bool *gameOver);
-
 /**
  * @brief Main function to play the game.
  *
@@ -174,15 +166,6 @@ void movementPhase(GameBoard *gameboard, int *currentPlacingPlayer, int numPengu
  * @param numPenguins The number of penguins each player has.
  * @param size The size of the game board.
  */
-void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *listener);
-
-void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase, int myId);
-
-void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced, sf::TcpSocket *socket);
-void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase, int *myId);
-
-void movementPhase(GameBoard *gameboard, Pair pressedTile, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinSelected, bool *gameOver, Penguin *selectedPenguin);
-
-void sendTile(int x, int y, int fishCount, int owningPlayer, sf::TcpSocket *socket, int currentPlayer, int currentPhase);
+void play(sf::RenderWindow *window);
 
 #endif

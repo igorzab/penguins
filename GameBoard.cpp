@@ -50,7 +50,7 @@ void randomizeField(GameBoard *gameBoard) {
             if (generateRandomNumber() < density * iceDensity) {
                 gameBoard->tiles[i][j].fishCount = fishAmount;
             } else {
-                gameBoard->tiles[i][j].fishCount = WATER;
+                gameBoard->tiles[i][j].fishCount = -1;
             }
 
             gameBoard->tiles[i][j].x = j;
@@ -59,36 +59,36 @@ void randomizeField(GameBoard *gameBoard) {
     }
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            if (gameBoard->tiles[i][j].fishCount == WATER) continue;
+            if (gameBoard->tiles[i][j].fishCount == -1) continue;
             bool waterOnWayX = false;
             bool waterOnWayY = false;
             if (j == size / 2) waterOnWayX;
             if (i == size / 2) waterOnWayY;
             for (int k = j + 1; k <= size / 2 + 1; k++) {
-                if (gameBoard->tiles[i][k].fishCount == WATER) {
+                if (gameBoard->tiles[i][k].fishCount == -1) {
                     waterOnWayX = true;
                     break;
                 }
             }
             for (int k = j - 1; k >= size / 2 - 1; k--) {
-                if (gameBoard->tiles[i][k].fishCount == WATER) {
+                if (gameBoard->tiles[i][k].fishCount == -1) {
                     waterOnWayX = true;
                     break;
                 }
             }
             for (int b = i + 1; b <= size / 2 + 1; b++) {
-                if (gameBoard->tiles[b][j].fishCount == WATER) {
+                if (gameBoard->tiles[b][j].fishCount == -1) {
                     waterOnWayY = true;
                     break;
                 }
             }
             for (int b = i - 1; b >= size / 2 - 1; b--) {
-                if (gameBoard->tiles[b][j].fishCount == WATER) {
+                if (gameBoard->tiles[b][j].fishCount == -1) {
                     waterOnWayY = true;
                     break;
                 }
             }
-            if (waterOnWayX && waterOnWayY) gameBoard->tiles[i][j].fishCount = WATER;
+            if (waterOnWayX && waterOnWayY) gameBoard->tiles[i][j].fishCount = -1;
         }
     }
 }
