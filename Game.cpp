@@ -275,7 +275,7 @@ void sendTile(int x, int y, int fishCount, int owningPlayer, sf::TcpSocket *sock
     sf::Packet packet;
     nlohmann::json json;
     json["x"] = x;
-    json["y"] = x;
+    json["y"] = y;
     json["fishCount"] = fishCount;
     json["owningPlayer"] = owningPlayer;
     std::string jsonString = json.dump();
@@ -387,8 +387,9 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
                 nlohmann::json json = nlohmann::json::parse(recievedData);
 //                std::cout << "Received data from server:\n" <<json.dump(4) << std::endl;
                 recievedData = "";
-                cout << "currentPlayer: " << json.at("currentPlayer") << endl;
-                cout << "currentPhase: " << json.at("currentPhase") << endl;
+               fill_n(buffer, 100000, 0);
+//                cout << "currentPlayer: " << json.at("currentPlayer") << endl;
+//                cout << "currentPhase: " << json.at("currentPhase") << endl;
 //                *currentPhase = json.at("currentPhase");
 //                *currentPlayer = json.at("currentPlayer");
                 cout << "Size: " << json.size() << endl;
@@ -398,10 +399,21 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
                     updateTile(gameBoard, json);
                 }
                 recievedData = "";
+                fill_n(buffer, 100000, 0);
+
             }else if(strlen(buffer) <= 1 && *myId == -1){
                 *myId = stoi(buffer);
                 cout << "New myID: " << *myId << endl;
                 if(*myId != 0){
+                    initializePlayers(gameBoard, 2, 2);
+                    initializePenguins(gameBoard, 2, 2);
+                    gameBoard->size = (2 * 2 + 20) / 1.5;
+                    if (gameBoard->size < 20) gameBoard->size = 20;
+                    gameBoard->tiles = (Tile **) malloc(gameBoard->size * sizeof(Tile *));
+
+                    for (int i = 0; i < gameBoard->size; i++) {
+                        gameBoard->tiles[i] = (Tile *) malloc(gameBoard->size * sizeof(Tile));
+                    }
                     sf::Packet packet;
                     packet << GET_BOARD;
                     if (socket->send(packet) != sf::Socket::Done) {
@@ -412,6 +424,7 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
                     }
                 }
                 recievedData = "";
+                fill_n(buffer, 100000, 0);
             }
         }
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
@@ -502,8 +515,8 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *list
                     if (!penguinsPlaced) {
                         if(currentPlacingPlayer == myId){
                             cout << "attempt to place a penguin..";
-                            placementPhase(pressedTile, &gameboard, &currentPlacingPlayer, numPenguins, numPlayers, &penguinsPlaced);
-                            sendData(&gameboard, numPlayers, numPlayers, socket, currentPlacingPlayer, currentPhase);
+                            placementPhase(pressedTile, &gameboard, &currentPlacingPlayer, numPenguins, numPlayers, &penguinsPlaced, socket);
+                           // sendData(&gameboard, numPlayers, numPlayers, socket, currentPlacingPlayer, currentPhase);
                             cout << " Placed!" << endl;
                         }
 
@@ -628,7 +641,7 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *list
     socket->disconnect();
 }
 
-void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced){
+void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced, sf::TcpSocket *socket){
     Player currentPlayer = gameboard->players[*currentPlacingPlayer];
     int counter = 0;
     while (counter < numPenguins) {
@@ -642,6 +655,7 @@ void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingP
             gameboard->players[*currentPlacingPlayer].score += gameboard->tiles[pressedTile.x][pressedTile.y].fishCount;
             drawAPenguin(pressedTile.x, pressedTile.y, gameboard);
             gameboard->tiles[pressedTile.x][pressedTile.y].owningPlayer = *currentPlacingPlayer + 1;
+            sendTile(pressedTile.x, pressedTile.y, PENGUIN_STATE,  gameboard->tiles[pressedTile.x][pressedTile.y].owningPlayer, socket, *currentPlacingPlayer, 3);
             if (*currentPlacingPlayer == numPlayers - 1 && counter == numPenguins - 1) {
                 *penguinsPlaced = true;
                 *currentPlacingPlayer = 0;
@@ -656,15 +670,17 @@ void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingP
 }
 
 void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase, int myId){
-    initializePlayers(gameboard, numPlayers, numPenguins);
-    initializePenguins(gameboard, numPlayers, numPenguins);
-    gameboard->size = (numPenguins * numPlayers + 20) / 1.5;
-    if (gameboard->size < 20) gameboard->size = 20;
-    gameboard->tiles = (Tile **) malloc(gameboard->size * sizeof(Tile *));
+    if(myId == 0){
+        initializePlayers(gameboard, numPlayers, numPenguins);
+        initializePenguins(gameboard, numPlayers, numPenguins);
+        gameboard->size = (numPenguins * numPlayers + 20) / 1.5;
+        if (gameboard->size < 20) gameboard->size = 20;
+        gameboard->tiles = (Tile **) malloc(gameboard->size * sizeof(Tile *));
 
-    for (int i = 0; i < gameboard->size; i++) {
-        gameboard->tiles[i] = (Tile *) malloc(gameboard->size * sizeof(Tile));
+        for (int i = 0; i < gameboard->size; i++) {
+            gameboard->tiles[i] = (Tile *) malloc(gameboard->size * sizeof(Tile));
+        }
+        randomizeField(gameboard);
+        sendData(gameboard, numPlayers, numPenguins, socket, currentPlayer, currentPhase);
     }
-    randomizeField(gameboard);
-    sendData(gameboard, numPlayers, numPenguins, socket, currentPlayer, currentPhase);
 }

@@ -178,10 +178,11 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, sf::TcpListener *list
 
 void gamePhase(GameBoard *gameboard, int numPlayers, int numPenguins, sf::TcpSocket *socket, int currentPlayer, int currentPhase, int myId);
 
-void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced);
-
+void placementPhase(Pair pressedTile, GameBoard *gameboard, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinsPlaced, sf::TcpSocket *socket);
 void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase, int *myId);
 
 void movementPhase(GameBoard *gameboard, Pair pressedTile, int *currentPlacingPlayer, int numPenguins, int numPlayers, bool *penguinSelected, bool *gameOver, Penguin *selectedPenguin);
+
+void sendTile(int x, int y, int fishCount, int owningPlayer, sf::TcpSocket *socket, int currentPlayer, int currentPhase);
 
 #endif
