@@ -45,7 +45,7 @@ void drawPenguinTile(struct GameBoard *board, int size, sf::Color tileBackground
  * @param size The size of the game board.
  * @param window A pointer to the SFML RenderWindow used for drawing.
  */
-void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window);
+void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window, int numPenguins, int numPlayers);
 
 /**
  * @brief Places a penguin on the game board at the specified position.
@@ -168,6 +168,6 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
  * @param numPenguins The number of penguins each player has.
  * @param size The size of the game board.
  */
-void play(sf::RenderWindow *window);
+void play(sf::RenderWindow *window, sf::TcpSocket *socket);
 
 #endif

@@ -20,6 +20,7 @@ void drawFirstPage(sf::RenderWindow *window, sf::Clock *snowClock, sf::IntRect *
 void generateRandomPair(Pair *pair, int rangeX, int rangeY);
 void drawBackground(sf::RenderWindow *window);
 void drawSecondPage(sf::RenderWindow *window, int *numPenguins, int *numPlayers);
+void drawThirdPage(sf::RenderWindow *window);
 void modifyValues(int* numPenguins, int* numPlayers, int *currentFaze, int clickX, int clickY);
 bool checkIntersection(int clickX, int clickY);
 
