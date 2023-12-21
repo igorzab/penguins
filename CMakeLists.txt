@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake_modules)
 
 set(SFML_ROOT C:/libs/SFML)
 
-find_package(SFML REQUIRED system window graphics audio)
+find_package(SFML REQUIRED system window graphics audio network)
 add_executable(penguins2 main.cpp
         Tile.cpp
         Tile.h

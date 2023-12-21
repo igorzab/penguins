@@ -155,6 +155,8 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins);
 
 void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float animationSpeed, sf::Clock *clock);
 
+
+void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase);
 /**
  * @brief Main function to play the game.
  *

@@ -5,8 +5,10 @@
 #include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 #include "SFML/Audio.hpp"
+#include "SFML/Network.hpp"
 #include "Penguin.h"
 #include "GameBoard.h"
+#include "json.hpp"
 #include <chrono>
 #include <thread>
 #ifndef PENGUINS2_MENU_H

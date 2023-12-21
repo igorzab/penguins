@@ -32,6 +32,9 @@ int main() {
 //    } while(size < 5 || size < numPlayers*numPenguins);
 
     int windowSize = size > 20 ? size * 20 : size * 40;
+
+    sf::TcpSocket socket;
+    socket.connect("127.0.0.1", 12345);
     sf::VideoMode desktop = sf::VideoMode::getFullscreenModes()[0];
     sf::RenderWindow window(desktop, "Rybka"); // sf::Style::Fullscreen for fullscreen mode
     window.setFramerateLimit(60);

@@ -11,6 +11,10 @@ sf::Sprite plusButtonPenguin;
 
 sf::Sprite minusButtonPenguin;
 
+sf::Sprite textFieldClient;
+
+sf::Sprite textFieldServer;
+
 sf::Sprite plusButtonPlayer;
 
 sf::Sprite minusButtonPlayer;
@@ -229,10 +233,10 @@ bool checkIntersection(int clickX, int clickY) {
 }
 
 void modifyValues(int *numPenguins, int *numPlayers, int *currentFaze, int clickX, int clickY) {
-    if (plusButtonPenguin.getGlobalBounds().contains(clickX, clickY)) *numPenguins = *numPenguins + 1;
+    if (plusButtonPenguin.getGlobalBounds().contains(clickX, clickY)&& *numPenguins) *numPenguins = *numPenguins + 1;
     if (minusButtonPenguin.getGlobalBounds().contains(clickX, clickY) && *numPenguins > 0)
         *numPenguins = *numPenguins - 1;
-    if (plusButtonPlayer.getGlobalBounds().contains(clickX, clickY)) *numPlayers = *numPlayers + 1;
+    if (plusButtonPlayer.getGlobalBounds().contains(clickX, clickY)&& *numPlayers < 9) *numPlayers = *numPlayers + 1;
     if (minusButtonPlayer.getGlobalBounds().contains(clickX, clickY) && *numPlayers > 0) *numPlayers = *numPlayers - 1;
     if (menu2NextButton.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 1) *currentFaze = *currentFaze + 1;
     if (startButtonSprite.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 0) *currentFaze = *currentFaze + 1;

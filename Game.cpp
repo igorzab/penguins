@@ -274,7 +274,56 @@ void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float an
     }
 }
 
-void play(sf::RenderWindow *window) {
+void parseGameBoard(GameBoard *gameBoard, nlohmann::json json) {
+    gameBoard->size = json.at("size");
+    const auto &jsonTiles = json.at("tiles");
+
+    for (int i = 0; i < gameBoard->size; i++)
+        for (int j = 0; j < gameBoard->size; j++) {
+//            cout << "recieved i: " << i << " j: " << j << " x: " << jsonTiles[i][j].at("x") << " y: " <<  jsonTiles[i][j].at("y")<< " fishCount: " <<  jsonTiles[i][j].at("fishCount")<< endl;
+            jsonTiles[j][i].at("fishCount").get_to(gameBoard->tiles[i][j].fishCount);
+            jsonTiles[j][i].at("x").get_to(gameBoard->tiles[i][j].x);
+            jsonTiles[j][i].at("y").get_to(gameBoard->tiles[i][j].y);
+            jsonTiles[j][i].at("owningPlayer").get_to(gameBoard->tiles[i][j].owningPlayer);
+        }
+    const auto &jsonPlayers = json.at("players");
+    for (size_t i = 0; i < jsonPlayers.size(); ++i) {
+        const auto &jsonPlayer = jsonPlayers[i];
+
+        jsonPlayer.at("playerID").get_to(gameBoard->players[i].playerID);
+        jsonPlayer.at("score").get_to(gameBoard->players[i].score);
+        jsonPlayer.at("numPenguins").get_to(gameBoard->players[i].numPenguins);
+
+        const auto &jsonPenguins = jsonPlayer.at("penguins");
+        for (size_t j = 0; j < jsonPenguins.size(); ++j) {
+            const auto &jsonPenguin = jsonPenguins[j];
+
+            jsonPenguin.at("isActive").get_to(gameBoard->players[i].penguins[j].isActive);
+            jsonPenguin.at("playerID").get_to(gameBoard->players[i].penguins[j].playerID);
+            jsonPenguin.at("x").get_to(gameBoard->players[i].penguins[j].x);
+            jsonPenguin.at("y").get_to(gameBoard->players[i].penguins[j].y);
+        }
+    }
+}
+
+void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase){
+    sf::Packet packet;
+    while (window->isOpen()){
+        char buffer[100000];
+        string recievedData;
+        std::size_t received;
+//        if (socket->receive(packet) == sf::Socket::Done) {
+//            packet >> recievedData;
+//            cout << "recieved buffer: "<< endl;
+//
+//        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    }
+}
+
+
+void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
     srand(time(NULL));
     sf::SoundBuffer buffer;
     sf::Sound sound;
@@ -306,7 +355,7 @@ void play(sf::RenderWindow *window) {
 
     int numPenguins = 3;
     int numPlayers = 2;
-    int currentFaze = 0;
+    int currentFaze = -1;
     sound.play();
     int positionCounter = 0;
     float animationSpeed = 0.03f;
@@ -318,11 +367,14 @@ void play(sf::RenderWindow *window) {
     sf::View view(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
     window->setView(view);
 
+    std::thread networkingThread(recieveData, socket, window, &gameboard, &currentFaze, &currentPlacingPlayer);
+
     while (window->isOpen()) {
         sf::Event event;
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window->close();
+                socket->disconnect();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
                 if (currentFaze <= 1) {
@@ -486,4 +538,9 @@ void play(sf::RenderWindow *window) {
         }
         window->display();
     }
+    networkingThread.join();
+
+    // Close the connection
+    socket->disconnect();
+
 }
