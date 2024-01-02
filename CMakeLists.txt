@@ -16,6 +16,8 @@ add_executable(penguins2 main.cpp
         Penguin.h
         GameBoard.cpp
         GameBoard.h
+        File.h
+        File.cpp
         Game.cpp
         Game.h
         Penguin.c

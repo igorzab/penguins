@@ -261,6 +261,10 @@ void drawThirdPage(sf::RenderWindow *window){
     window->draw(textServer);
 }
 
+void drawFinal(sf::RenderWindow *window, GameBoard *gameBoard){
+    
+}
+
 bool checkIntersection(int clickX, int clickY) {
     if (startButtonSprite.getGlobalBounds().contains(clickX, clickY)) {
         return true;

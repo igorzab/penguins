@@ -408,6 +408,7 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
                         for (int i = 0; i < gameboard.size; i++) {
                             gameboard.tiles[i] = (Tile *) malloc(gameboard.size * sizeof(Tile));
                         }
+                        readGameData(&gameboard, numPlayers);
                         randomizeField(&gameboard);
                     }
                 } else {
@@ -505,8 +506,7 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
         }
         // Handle camera movement
         float cameraSpeed = 10.0f; // Adjust as needed
-        sf::FloatRect viewBounds(0, 0, gameboard.size * tileSize, gameboard.size *
-                                                                  tileSize); // Adjust mapWidth and mapHeight according to your game world
+        sf::FloatRect viewBounds(0, 0, gameboard.size * tileSize, gameboard.size * tileSize); // Adjust mapWidth and mapHeight according to your game world
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             view.move(-cameraSpeed, 0);
 
@@ -518,6 +518,12 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             view.move(0, cameraSpeed);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::P)) {
+            view.zoom(0.9f);
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::M)) {
+            view.zoom(1.1f);
         }
         sf::Vector2f viewCenter = view.getCenter();
         sf::Vector2f viewSize = view.getSize();
@@ -554,6 +560,7 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
         } else if (currentFaze == 2) {
             drawThirdPage(window);
         } else if (currentFaze == 3) {
+//            writeGameState(gameboard, numPlayers);
             drawGameBoard(&gameboard, gameboard.size, window, numPenguins, numPlayers);
         }
         window->display();
