@@ -560,7 +560,7 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
         } else if (currentFaze == 2) {
             drawThirdPage(window);
         } else if (currentFaze == 3) {
-//            writeGameState(gameboard, numPlayers);
+            writeGameState(&gameboard, numPlayers);
             drawGameBoard(&gameboard, gameboard.size, window, numPenguins, numPlayers);
         }
         window->display();

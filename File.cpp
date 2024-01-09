@@ -1,79 +1,70 @@
-//
-// Created by igor zab on 28/12/2023.
-//
+////
+//// Created by igor zab on 28/12/2023.
+////
 #include "File.h"
 
-void writeGameState(GameBoard& game, int numPlayers){
 
-    std::ofstream outFile("out.txt");
+
+void writeGameState(GameBoard* game, int numPlayers) {
+    FILE* outFile = fopen("out.txt", "w");
 
     if (!outFile) {
-        std::cerr << "Error opening file: " << "out.txt" << std::endl;
+        perror("Error opening file: out.txt");
         exit(1);
     }
 
     // Write the board size
-    outFile << game.size << std::endl;
+    fprintf(outFile, "%d\n", game->size);
 
     // Write the board state
-
-    //TODO: If a player steps on a tile, we remove it's fish. that way we don't remember the amount while encoding a file.
-    for (int i = 0; i < game.size; ++i) {
-        for (int j = 0; j < game.size; ++j) {
-            int fishcount_converted = 0;
-            if(game.tiles[i][j].fishCount == -1 || game.tiles[i][j].fishCount == -2){
-                fishcount_converted = 0;
-            }else {
-                fishcount_converted = game.tiles[i][j].fishCount;
-            }
-            outFile << fishcount_converted << game.tiles[i][j].owningPlayer << " ";
+    for (int i = 0; i < game->size; ++i) {
+        for (int j = 0; j < game->size; ++j) {
+            int fishcount_converted = (game->tiles[i][j].fishCount == -1 || game->tiles[i][j].fishCount == -2) ? 0 : game->tiles[i][j].fishCount;
+            fprintf(outFile, "%d%d ", fishcount_converted, game->tiles[i][j].owningPlayer);
         }
-        outFile << std::endl;
+        fprintf(outFile, "\n");
     }
 
-    for(int i = 0; i < numPlayers; i++){
-        outFile << game.players[i].playerID << game.players[i].playerID << " " << game.players[i].score  << std::endl;
+    // Assuming Player structure (not provided in the original code)
+    // You might need to loop through players and write their information
+    for (int i = 0; i < numPlayers; i++) {
+        fprintf(outFile, "%d%d %d \n", game->players[i].playerID, game->players[i].playerID, game->players[i].score);
     }
 
-
-    outFile << std::endl;
-
-    outFile.close();
-
+    fclose(outFile);
 }
 
 void readGameData(GameBoard* gameBoard, int numPlayers) {
-    ifstream inFile("out.txt");
+    FILE* inFile = fopen("out.txt", "r");
+
     if (!inFile) {
-        std::cerr << "Error opening file: " << "out.txt" << std::endl;
+        perror("Error opening file: out.txt");
         exit(1);
     }
-    inFile >> gameBoard->size;
-    cout << "\nsize: " << gameBoard->size << '\n';
-    // Allocate memory for tiles
-    gameBoard->tiles = (Tile **) malloc(gameBoard->size * sizeof(Tile *));
 
+    fscanf(inFile, "%d", &gameBoard->size);
+    printf("\nsize: %d\n", gameBoard->size);
+
+    // Allocate memory for tiles
+    gameBoard->tiles = (Tile**)malloc(gameBoard->size * sizeof(Tile*));
     for (int i = 0; i < gameBoard->size; i++) {
-        gameBoard->tiles[i] = (Tile *) malloc(gameBoard->size * sizeof(Tile));
+        gameBoard->tiles[i] = (Tile*)malloc(gameBoard->size * sizeof(Tile));
     }
 
     // Read the board state
     for (int i = 0; i < gameBoard->size; ++i) {
         for (int j = 0; j < gameBoard->size; ++j) {
-            string recievedString;
-            inFile >> recievedString;
-            int converted_string = stoi(recievedString);
-            int fishCount = floor(converted_string / 10);
+            int converted_string;
+            fscanf(inFile, "%d", &converted_string);
+            int fishCount = converted_string / 10;
             int owningPlayer = converted_string % 10;
-            cout << "i: " << i << " j: " << j << " Parsed string: "<< " fishCount: " << fishCount << " Player: " << owningPlayer << '\n';
+            printf("i: %d j: %d Parsed string: %d fishCount: %d Player: %d\n", i, j, converted_string, fishCount, owningPlayer);
         }
     }
 
-//    // Read player information
-//    for(int i = 0; i < numPlayers; i++){
-//        inFile >> gameBoard->players[i].playerID >> gameBoard->players[i].score;
-//    }
+    // Assuming Player structure (not provided in the original code)
+    // You might need to loop through players and read their information
+    // fscanf(inFile, "%d%d %d\n", &gameBoard->players[i].playerID, &gameBoard->players[i].playerID, &gameBoard->players[i].score);
 
-    inFile.close();
-
+    fclose(inFile);
 }
