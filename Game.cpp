@@ -147,15 +147,25 @@ void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window, 
             switch (tile.fishCount) {
                 case -2:
                     Penguin penguin;
-                    for(int k = 0; k < numPlayers; k++){
-                        for(int l = 0; l < numPenguins; l++){
-                            if(board->players[k].penguins[l].x == i && board->players[k].penguins[l].y == j) penguin = board->players[k].penguins[l];
+                    for (int k = 0; k < numPlayers; k++) {
+                        bool found = false;
+                        for (int l = 0; l < numPenguins; l++) {
+//                            printf("trying to check penguin with playerId: %d, penguinId: %d, x: %d, y: %d. and check args are i: %d, j: %d... ",
+//                                   k, l, board->players[k].penguins[l].x, board->players[k].penguins[l].y, i, j);
+                            if (board->players[k].penguins[l].x == i && board->players[k].penguins[l].y == j) {
+//                                printf("found!\n");
+                                penguin = board->players[k].penguins[l];
+                                found = true;
+                                break;
+                            }
+//                            else { printf("\n"); }
                         }
+                        if(found) { break; }
                     }
-                    if(canMove(&penguin, board)){
-                        sprite.setTexture(Penguins[tile.owningPlayer-1]);
-                    }else{
-                        sprite.setTexture(deadPenguins[tile.owningPlayer-1]);
+                    if (canMove(&penguin, board)) {
+                        sprite.setTexture(Penguins[tile.owningPlayer - 1]);
+                    } else {
+                        sprite.setTexture(deadPenguins[tile.owningPlayer - 1]);
                     }
                     break;
                 case 1:
@@ -209,11 +219,11 @@ void initializePlayers(GameBoard *gameBoard, int numPlayers, int numPenguins) {
 void initializePenguins(GameBoard *gameBoard, int numPlayers, int numPenguins) {
     for (int i = 0; i < numPlayers; i++) {
         for (int j = 0; j < numPenguins; j++) {
-            Penguin currentPenguin = gameBoard->players[i].penguins[j];
-            currentPenguin.x = 255;
-            currentPenguin.y = 255;
-            currentPenguin.playerID = i + 1;
-            currentPenguin.isActive = 1;
+            gameBoard->players[i].penguins[j].x = 255;
+            gameBoard->players[i].penguins[j].y = 255;
+            gameBoard->players[i].penguins[j].playerID = i + 1;
+            gameBoard->players[i].penguins[j].isActive = 1;
+            printf("initializing penguin with playerIndex: %d, penguinIndex: %d\n", i, j);
         }
     }
 }
@@ -315,9 +325,10 @@ void parseGameBoard(GameBoard *gameBoard, nlohmann::json json) {
     }
 }
 
-void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase){
+void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer,
+                 int *currentPhase) {
     sf::Packet packet;
-    while (window->isOpen()){
+    while (window->isOpen()) {
         char buffer[100000];
         string recievedData;
         std::size_t received;
@@ -332,7 +343,7 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
 }
 
 
-void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
+void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
     srand(time(NULL));
     sf::SoundBuffer buffer;
     sf::Sound sound;
@@ -341,6 +352,9 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
     // sound.setBuffer(buffer);
     bool gameOver = false;
     bool penguinsPlaced = false;
+    if(inputPhase > 0){
+        penguinsPlaced = true;
+    }
     bool penguinSelected = false;
     Penguin *selectedPenguin;
     int currentPlacingPlayer = 0;
@@ -395,21 +409,24 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
                         packet << stringPacket;
 
                         if (socket->send(packet) == sf::Socket::Done) {
-                           cout << "packet sent" << endl;
+                            cout << "packet sent" << endl;
 
                         }
 
                         initializePlayers(&gameboard, numPlayers, numPenguins);
                         initializePenguins(&gameboard, numPlayers, numPenguins);
-                        gameboard.size = (numPenguins * numPlayers + 20)/1.5;
-                        if(gameboard.size < 20) gameboard.size = 20;
+                        gameboard.size = (numPenguins * numPlayers + 20) / 1.5;
+                        if (gameboard.size < 20) gameboard.size = 20;
                         gameboard.tiles = (Tile **) malloc(gameboard.size * sizeof(Tile *));
 
                         for (int i = 0; i < gameboard.size; i++) {
                             gameboard.tiles[i] = (Tile *) malloc(gameboard.size * sizeof(Tile));
                         }
-                        readGameData(&gameboard, numPlayers);
-                        randomizeField(&gameboard);
+                        if (inputPhase == 0) {
+                            randomizeField(&gameboard);
+                        } else {
+                            readGameData(&gameboard, &numPlayers, &numPenguins);
+                        }
                     }
                 } else {
                     sf::Vector2i mousePosition = sf::Mouse::getPosition(*window);
@@ -506,7 +523,8 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
         }
         // Handle camera movement
         float cameraSpeed = 10.0f; // Adjust as needed
-        sf::FloatRect viewBounds(0, 0, gameboard.size * tileSize, gameboard.size * tileSize); // Adjust mapWidth and mapHeight according to your game world
+        sf::FloatRect viewBounds(0, 0, gameboard.size * tileSize, gameboard.size *
+                                                                  tileSize); // Adjust mapWidth and mapHeight according to your game world
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
             view.move(-cameraSpeed, 0);
 
@@ -560,7 +578,6 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket) {
         } else if (currentFaze == 2) {
             drawThirdPage(window);
         } else if (currentFaze == 3) {
-            writeGameState(&gameboard, numPlayers);
             drawGameBoard(&gameboard, gameboard.size, window, numPenguins, numPlayers);
         }
         window->display();

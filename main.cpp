@@ -12,7 +12,8 @@ int getUserInput(const char* prompt) {
     return value;
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    //TODO: input pars checker
     // Loop until user enter valid number of players
     int numPlayers = 2;
 //    do {
@@ -38,7 +39,7 @@ int main() {
     sf::VideoMode desktop = sf::VideoMode::getFullscreenModes()[0];
     sf::RenderWindow window(desktop, "Rybka"); // sf::Style::Fullscreen for fullscreen mode
     window.setFramerateLimit(60);
-    play(&window, &socket);
+    play(&window, &socket, 1);
 
     return 0;
 }

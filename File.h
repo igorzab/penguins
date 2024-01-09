@@ -10,6 +10,6 @@ using namespace std;
 #define PENGUINS2_FILE_H
 
 void writeGameState(GameBoard* game, int numPlayers);
-void readGameData(GameBoard* gameBoard, int numPlayers);
+void readGameData(GameBoard* gameBoard, int *numPlayers, int *numPenguins);
 
 #endif //PENGUINS2_FILE_H
