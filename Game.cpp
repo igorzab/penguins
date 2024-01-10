@@ -343,7 +343,7 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
 }
 
 
-void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
+void play(sf::RenderWindow *window, int inputPhase, int useFiles, char *inputboardfile, char *outputboardfile){
     srand(time(NULL));
     sf::SoundBuffer buffer;
     sf::Sound sound;
@@ -352,7 +352,8 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
     // sound.setBuffer(buffer);
     bool gameOver = false;
     bool penguinsPlaced = false;
-    if(inputPhase > 0){
+    if(inputPhase && useFiles){
+        printf("penguins placed\n");
         penguinsPlaced = true;
     }
     bool penguinSelected = false;
@@ -378,7 +379,7 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
 
     int numPenguins = 3;
     int numPlayers = 2;
-    int currentFaze = -1;
+    int currentPhase = 0;
     sound.play();
     int positionCounter = 0;
     float animationSpeed = 0.03f;
@@ -390,28 +391,28 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
     sf::View view(sf::FloatRect(0, 0, window->getSize().x, window->getSize().y));
     window->setView(view);
 
-    std::thread networkingThread(recieveData, socket, window, &gameboard, &currentFaze, &currentPlacingPlayer);
+//    std::thread networkingThread(recieveData, socket, window, &gameboard, &currentPhase, &currentPlacingPlayer);
 
     while (window->isOpen()) {
         sf::Event event;
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window->close();
-                socket->disconnect();
+//                socket->disconnect();
             }
             if (event.type == sf::Event::MouseButtonPressed) {
-                if (currentFaze <= 2) {
-                    modifyValues(&numPenguins, &numPlayers, &currentFaze, event.mouseButton.x, event.mouseButton.y);
-                    if (currentFaze == 3) {
-                        cout << "sending numPlayers";
-                        string stringPacket = to_string(numPlayers);
-                        sf::Packet packet;
-                        packet << stringPacket;
-
-                        if (socket->send(packet) == sf::Socket::Done) {
-                            cout << "packet sent" << endl;
-
-                        }
+                if (currentPhase <= 2) {
+                    modifyValues(&numPenguins, &numPlayers, &currentPhase, event.mouseButton.x, event.mouseButton.y);
+                    if (currentPhase == 3) {
+//                        cout << "sending numPlayers";
+//                        string stringPacket = to_string(numPlayers);
+//                        sf::Packet packet;
+//                        packet << stringPacket;
+//
+//                        if (socket->send(packet) == sf::Socket::Done) {
+//                            cout << "packet sent" << endl;
+//
+//                        }
 
                         initializePlayers(&gameboard, numPlayers, numPenguins);
                         initializePenguins(&gameboard, numPlayers, numPenguins);
@@ -422,10 +423,10 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
                         for (int i = 0; i < gameboard.size; i++) {
                             gameboard.tiles[i] = (Tile *) malloc(gameboard.size * sizeof(Tile));
                         }
-                        if (inputPhase == 0) {
+                        if (useFiles == 0) {
                             randomizeField(&gameboard);
                         } else {
-                            readGameData(&gameboard, &numPlayers, &numPenguins);
+                            readGameData(&gameboard, &numPlayers, &numPenguins, inputboardfile);
                         }
                     }
                 } else {
@@ -435,14 +436,14 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
                     sf::Vector2f worldMousePosition = window->mapPixelToCoords(mousePosition, view);
                     Pair pressedTile = getPressedTile(worldMousePosition.x, worldMousePosition.y, &gameboard);
                     if (!penguinsPlaced) {
-                        cout << "pressedX: " << pressedTile.x << " PressedY: " << pressedTile.y << endl;
+                        cout << "attempt to place.. pressedX: " << pressedTile.x << " PressedY: " << pressedTile.y << endl;
                         Player currentPlayer = gameboard.players[currentPlacingPlayer];
                         int counter = 0;
-                        cout << numPenguins << endl;
+                        cout <<"numPenguins: " << numPenguins << endl;
                         while (counter < numPenguins) {
-                            cout << currentPlayer.penguins[counter].x << endl;
+                            cout << "currentPlacing x: " <<  currentPlayer.penguins[counter].x << endl;
                             if ((currentPlayer.penguins[counter].x > gameboard.size * 100 + gameboard.size ||
-                                 currentPlayer.penguins[counter].x == 0) &&
+                                 currentPlayer.penguins[counter].x == 0 ||   currentPlayer.penguins[counter].x == 255) &&
                                 !badTileOnWay(pressedTile.x, pressedTile.y, &gameboard) &&
                                 gameboard.tiles[pressedTile.x][pressedTile.y].fishCount == 1) {
 
@@ -476,6 +477,7 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
                                         canMove(&currentPlayer.penguins[i], &gameboard)) {
                                         selectedPenguin = &currentPlayer.penguins[i];
                                         gameboard.tiles[pressedTile.x][pressedTile.y].fishCount = -3;
+                                        gameboard.tiles[pressedTile.x][pressedTile.y].owningPlayer = 0;
                                         penguinSelected = true;
                                         break;
                                     }
@@ -567,24 +569,27 @@ void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase) {
         window->clear(sf::Color::White);
 
         window->setView(view);
-        if (currentFaze == -2) {
+        if (currentPhase == -2) {
             window->draw(backgroundSprite);
-        } else if (currentFaze == -1) {
-            drawIntro(window, &introClock, introAnimationSpeed, &positionCounter, &currentFaze);
-        } else if (currentFaze == 0) {
+        } else if (currentPhase == -1) {
+            drawIntro(window, &introClock, introAnimationSpeed, &positionCounter, &currentPhase);
+        } else if (currentPhase == 0) {
             drawFirstPage(window, &snowClock, &snowRect);
-        } else if (currentFaze == 1) {
+        } else if (currentPhase == 1) {
             drawSecondPage(window, &numPenguins, &numPlayers);
-        } else if (currentFaze == 2) {
+        } else if (currentPhase == 2) {
             drawThirdPage(window);
-        } else if (currentFaze == 3) {
+        } else if (currentPhase == 3) {
+            if(useFiles == 1){
+                writeGameState(&gameboard, numPlayers, outputboardfile);
+            }
             drawGameBoard(&gameboard, gameboard.size, window, numPenguins, numPlayers);
         }
         window->display();
     }
-    networkingThread.join();
+//    networkingThread.join();
 
     // Close the connection
-    socket->disconnect();
+//    socket->disconnect();
 
 }

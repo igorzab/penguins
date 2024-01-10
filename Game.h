@@ -169,6 +169,6 @@ void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gam
  * @param numPenguins The number of penguins each player has.
  * @param size The size of the game board.
  */
-void play(sf::RenderWindow *window, sf::TcpSocket *socket, int inputPhase);
+void play(sf::RenderWindow *window, int inputPhase, int useFiles, char *inputboardfile, char *outputboardfile);
 
 #endif

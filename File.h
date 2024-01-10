@@ -9,7 +9,7 @@ using namespace std;
 #ifndef PENGUINS2_FILE_H
 #define PENGUINS2_FILE_H
 
-void writeGameState(GameBoard* game, int numPlayers);
-void readGameData(GameBoard* gameBoard, int *numPlayers, int *numPenguins);
+void writeGameState(GameBoard* game, int numPlayers, char *name);
+void readGameData(GameBoard* gameBoard, int *numPlayers, int *numPenguins, char *name);
 
 #endif //PENGUINS2_FILE_H

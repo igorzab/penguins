@@ -4,8 +4,8 @@
 #include "File.h"
 
 
-void writeGameState(GameBoard *game, int numPlayers) {
-    FILE *outFile = fopen("out.txt", "w");
+void writeGameState(GameBoard *game, int numPlayers, char *name) {
+    FILE *outFile = fopen(name, "w");
 
     if (!outFile) {
         perror("Error opening file: out.txt");
@@ -34,8 +34,8 @@ void writeGameState(GameBoard *game, int numPlayers) {
     fclose(outFile);
 }
 
-void readGameData(GameBoard *gameBoard, int *numPlayers, int *numPenguins) {
-    FILE *inFile = fopen("out.txt", "r");
+void readGameData(GameBoard *gameBoard, int *numPlayers, int *numPenguins, char *name) {
+    FILE *inFile = fopen(name, "r");
 
     if (!inFile) {
         perror("Error opening file: out.txt");
