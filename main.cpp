@@ -41,24 +41,39 @@ bool processParameters(char *phase, int penguins, char *inputboardfile, char *ou
 
 int main(int argc, char *argv[]) {
 
-    // Check if the correct number of arguments are provided
-    char *phase = "";
-    int penguins = 3;
-    char *name = "";
-    char *inputboardfile = "out.txt";
-    char *outputboardfile ="out.txt";
+    // Initialize variables
+    char *phase = NULL;
+    int penguins = 0;
+    char *inputboardfile = NULL;
+    char *outputboardfile = NULL;
+    char *name = NULL;
+
+
+
     int useFiles = 1;
     if (argc != 6) {
         printf("Invalid params size. proceeding without params.\n");
         useFiles = 0;
     }else{
         // Parse arguments
+        for (int i = 1; i < argc; i++) {
+            char *param = strtok(argv[i], "=");
+            char *value = strtok(NULL, "=");
 
-         phase = argv[1];
-         penguins = atoi(argv[2]);
-         name = argv[5];
-         inputboardfile = argv[3];
-         outputboardfile = argv[4];
+            if (param && value) {
+                if (strcmp(param, "phase") == 0) {
+                    phase = value;
+                } else if (strcmp(param, "penguins") == 0) {
+                    penguins = atoi(value);
+                } else if (strcmp(param, "inputboardfile") == 0) {
+                    inputboardfile = value;
+                } else if (strcmp(param, "outputboardfile") == 0) {
+                    outputboardfile = value;
+                } else if (strcmp(param, "name") == 0) {
+                    name = value;
+                }
+            }
+        }
         // Process parameters
         if(!processParameters(phase, penguins, inputboardfile, outputboardfile, name)){
             return 0;
