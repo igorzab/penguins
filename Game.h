@@ -6,6 +6,7 @@
 #define PENGUINS2_GAME_H
 
 #include "Menu.h"
+#include "File.h"
 
 
 
@@ -45,7 +46,7 @@ void drawPenguinTile(struct GameBoard *board, int size, sf::Color tileBackground
  * @param size The size of the game board.
  * @param window A pointer to the SFML RenderWindow used for drawing.
  */
-void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window);
+void drawGameBoard(struct GameBoard *board, int size, sf::RenderWindow *window, int numPenguins, int numPlayers);
 
 /**
  * @brief Places a penguin on the game board at the specified position.
@@ -155,6 +156,8 @@ bool totalMovesExist(GameBoard *gameBoard, int numPlayers, int numPenguins);
 
 void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float animationSpeed, sf::Clock *clock);
 
+
+void recieveData(sf::TcpSocket *socket, sf::RenderWindow *window, GameBoard *gameBoard, int *currentPlayer, int *currentPhase);
 /**
  * @brief Main function to play the game.
  *
@@ -166,6 +169,6 @@ void playAnimation(sf::Sprite *animatedSprite, sf::IntRect *rectSource, float an
  * @param numPenguins The number of penguins each player has.
  * @param size The size of the game board.
  */
-void play(sf::RenderWindow *window);
+void play(sf::RenderWindow *window, int inputPhase, int useFiles, char *inputboardfile, char *outputboardfile);
 
 #endif

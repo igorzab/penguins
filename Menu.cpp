@@ -11,6 +11,10 @@ sf::Sprite plusButtonPenguin;
 
 sf::Sprite minusButtonPenguin;
 
+sf::Sprite textFieldClient;
+
+sf::Sprite textFieldServer;
+
 sf::Sprite plusButtonPlayer;
 
 sf::Sprite minusButtonPlayer;
@@ -18,6 +22,7 @@ sf::Sprite minusButtonPlayer;
 sf::Sprite menu2NextButton;
 
 sf::Sprite introLogo;
+
 
 void animateLogo(sf::Sprite *animatedSprite ,int *positionCounter, float animationSpeed, sf::Clock *clock, int yCoordinate, int *currentFaze, int xSize){
 
@@ -220,6 +225,45 @@ void drawSecondPage(sf::RenderWindow *window, int *numPenguins, int *numPlayers)
     window->draw(textPlayer);
 }
 
+void drawThirdPage(sf::RenderWindow *window){
+
+    sf::Vector2u windowSizeVector = window->getSize();
+
+    unsigned int xSize = windowSizeVector.x;
+    unsigned int ySize = windowSizeVector.y;
+
+    sf::Texture inputField;
+    sf::Font font;
+    if (!inputField.loadFromFile("/Users/igorzab/CLionProjects/epfu/assets/img/inputField.png"))
+        cout << "ERROR loading inputField image.\n";
+    if (!font.loadFromFile("/Users/igorzab/CLionProjects/epfu/fonts/arial.ttf")) cout << "ERROR loading font.\n";
+    drawBackground(window);
+
+
+    textFieldClient.setTexture(inputField);
+    textFieldServer.setTexture(inputField);
+    textFieldClient.setPosition((xSize - textFieldClient.getGlobalBounds().width) / 2 - 120, ySize / 2 - 200);
+    sf::Text textClient("PLAY AS CLIENT", font, 30);
+    textClient.setPosition(textFieldClient.getPosition().x + 50,
+                            textFieldClient.getPosition().y + textFieldClient.getGlobalBounds().height / 2 - 20);
+    textClient.setFillColor(sf::Color::Black);
+
+    textFieldServer.setPosition((xSize - textFieldServer.getGlobalBounds().width) / 2 - 120, ySize / 2 - 200 + textFieldServer.getGlobalBounds().height + 60);
+    sf::Text textServer("PLAY AS SERVER", font, 30);
+    textServer.setPosition(
+            textFieldServer.getPosition().x + textFieldServer.getGlobalBounds().width / 2 - 120,
+            textFieldServer.getPosition().y + textFieldServer.getGlobalBounds().height / 2 - 25);
+    textServer.setFillColor(sf::Color::Black);
+
+    window->draw(textFieldClient);
+    window->draw(textFieldServer);
+    window->draw(textClient);
+    window->draw(textServer);
+}
+
+void drawFinal(sf::RenderWindow *window, GameBoard *gameBoard){
+    
+}
 
 bool checkIntersection(int clickX, int clickY) {
     if (startButtonSprite.getGlobalBounds().contains(clickX, clickY)) {
@@ -229,11 +273,16 @@ bool checkIntersection(int clickX, int clickY) {
 }
 
 void modifyValues(int *numPenguins, int *numPlayers, int *currentFaze, int clickX, int clickY) {
-    if (plusButtonPenguin.getGlobalBounds().contains(clickX, clickY)) *numPenguins = *numPenguins + 1;
+    if (plusButtonPenguin.getGlobalBounds().contains(clickX, clickY)&& *numPenguins) *numPenguins = *numPenguins + 1;
     if (minusButtonPenguin.getGlobalBounds().contains(clickX, clickY) && *numPenguins > 0)
         *numPenguins = *numPenguins - 1;
-    if (plusButtonPlayer.getGlobalBounds().contains(clickX, clickY)) *numPlayers = *numPlayers + 1;
+    if (plusButtonPlayer.getGlobalBounds().contains(clickX, clickY)&& *numPlayers < 9) *numPlayers = *numPlayers + 1;
     if (minusButtonPlayer.getGlobalBounds().contains(clickX, clickY) && *numPlayers > 0) *numPlayers = *numPlayers - 1;
     if (menu2NextButton.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 1) *currentFaze = *currentFaze + 1;
     if (startButtonSprite.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 0) *currentFaze = *currentFaze + 1;
+
+    if (textFieldClient.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 2) *currentFaze = *currentFaze + 1;
+    if (textFieldServer.getGlobalBounds().contains(clickX, clickY) && *currentFaze == 2) {
+        *currentFaze = *currentFaze + 1;
+    }
 }
